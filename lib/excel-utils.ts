@@ -175,7 +175,7 @@ export async function readCsvFromUrl(url: string): Promise<ExcelRow[]> {
           resolve(results.data as ExcelRow[]);
         }
       },
-      error: (error) => {
+      error: (error:any) => {
         reject(error);
       },
     });
