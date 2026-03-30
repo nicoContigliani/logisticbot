@@ -4,12 +4,12 @@
 export const swaggerSpec = {
   openapi: '3.0.0',
   info: {
-    title: 'EyTeacher API',
+    title: 'LogisticBot API',
     version: '1.0.0',
     description: 'Educational Platform API Documentation',
     contact: {
       name: 'API Support',
-      email: 'support@eyteacher.com',
+      email: 'support@logisticbot.com',
     },
   },
   servers: [

@@ -1,34 +1,22 @@
 'use client';
 
-import { useState, useEffect, ReactNode } from 'react';
-import { ThemeProvider as MuiThemeProvider, CssBaseline } from '@mui/material';
-import { lightTheme, darkTheme } from '@/theme/theme';
+import React from 'react';
 import { useAppStore } from '@/store/useAppStore';
 
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-export function ThemeProvider({ children }: ThemeProviderProps) {
-  const { theme } = useAppStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
-
-  const isDark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
-  const currentTheme = isDark ? darkTheme : lightTheme;
+// Simple theme provider - no MUI dependency
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const { theme = 'light' } = useAppStore();
+  
+  // Set data attribute for CSS selectors
+  React.useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-mode', theme);
+  }, [theme]);
 
   return (
-    <MuiThemeProvider theme={currentTheme}>
-      <CssBaseline />
+    <>
       {children}
-    </MuiThemeProvider>
+    </>
   );
 }
 

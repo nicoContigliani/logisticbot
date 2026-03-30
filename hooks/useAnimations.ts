@@ -1,145 +1,54 @@
 'use client';
 
 import { useCallback } from 'react';
-import { motion, Variants, Transition } from 'framer-motion';
 
-// Type-safe spring configuration
-export const springTransition: Transition = {
-  type: 'spring',
-  stiffness: 260,
-  damping: 20,
+// CSS-based animation utilities (replacing framer-motion)
+
+// Page transition variants (CSS classes)
+export const pageVariants = {
+  initial: 'animate-fade-in-up',
+  animate: 'animate-fade-in',
+  exit: 'animate-fade-out',
 };
 
-// Page transition variants
-export const pageVariants: Variants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut',
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -20,
-    transition: {
-      duration: 0.3,
-    },
-  },
+// Fade in variants (CSS classes)
+export const fadeInVariants = {
+  initial: 'animate-fade-in',
+  animate: 'animate-fade-in',
+  exit: 'animate-fade-out',
 };
 
-// Fade in variants
-export const fadeInVariants: Variants = {
-  initial: {
-    opacity: 0,
-  },
-  animate: {
-    opacity: 1,
-    transition: {
-      duration: 0.5,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      duration: 0.3,
-    },
-  },
+// Slide variants (CSS classes)
+export const slideInVariants = {
+  initial: 'animate-slide-right',
+  animate: 'animate-slide-right',
+  exit: 'animate-slide-left',
 };
 
-// Slide variants
-export const slideInVariants: Variants = {
-  initial: {
-    opacity: 0,
-    x: -50,
-  },
-  animate: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.5,
-      ease: 'easeOut',
-    },
-  },
-  exit: {
-    opacity: 0,
-    x: 50,
-    transition: {
-      duration: 0.3,
-    },
-  },
+// Scale variants (CSS classes)
+export const scaleInVariants = {
+  initial: 'animate-scale',
+  animate: 'animate-scale',
+  exit: 'animate-scale',
 };
 
-// Scale variants
-export const scaleInVariants: Variants = {
-  initial: {
-    opacity: 0,
-    scale: 0.8,
-  },
-  animate: {
-    opacity: 1,
-    scale: 1,
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut',
-    },
-  },
-  exit: {
-    opacity: 0,
-    scale: 0.8,
-    transition: {
-      duration: 0.3,
-    },
-  },
+// Stagger children variants (CSS classes)
+export const staggerContainer = {
+  initial: 'animate-stagger',
+  animate: 'animate-stagger',
 };
 
-// Stagger children variants
-export const staggerContainer: Variants = {
-  initial: {},
-  animate: {
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1,
-    },
-  },
+// List item variants (CSS classes)
+export const listItemVariants = {
+  initial: 'animate-fade-in-up',
+  animate: 'animate-fade-in-up',
 };
 
-// List item variants
-export const listItemVariants: Variants = {
-  initial: {
-    opacity: 0,
-    y: 20,
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.4,
-      ease: 'easeOut',
-    },
-  },
-};
+// Hover scale animation (CSS class)
+export const hoverScale = 'hover:scale-102 transition-transform duration-200';
 
-// Hover scale animation
-export const hoverScale = {
-  scale: 1.02,
-  transition: {
-    duration: 0.2,
-  },
-};
-
-// Tap scale animation
-export const tapScale = {
-  scale: 0.98,
-  transition: {
-    duration: 0.1,
-  },
-};
+// Tap scale animation (CSS class)
+export const tapScale = 'active:scale-98 transition-transform duration-100';
 
 // Custom hook for staggered animations
 export function useStaggeredAnimation(itemCount: number, baseDelay: number = 0) {
@@ -151,30 +60,14 @@ export function useStaggeredAnimation(itemCount: number, baseDelay: number = 0) 
     [baseDelay]
   );
 
-  const containerVariants: Variants = {
-    initial: {},
-    animate: {
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: baseDelay,
-      },
-    },
+  const containerVariants = {
+    initial: 'animate-stagger',
+    animate: 'animate-stagger',
   };
 
-  const itemVariants: Variants = {
-    initial: {
-      opacity: 0,
-      y: 20,
-    },
-    animate: (index: number) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.4,
-        delay: index * 0.1,
-        ease: 'easeOut',
-      },
-    }),
+  const itemVariants = {
+    initial: 'animate-fade-in-up',
+    animate: (index: number) => `animate-stagger animate-stagger-${index + 1}`,
   };
 
   return { containerVariants, itemVariants, getDelay };
@@ -188,7 +81,11 @@ export const animationConfig = {
 };
 
 // Legacy export for compatibility
-export const springConfig = springTransition;
+export const springConfig = {
+  type: 'spring',
+  stiffness: 260,
+  damping: 20,
+};
 
 export default {
   pageVariants,
@@ -200,5 +97,5 @@ export default {
   hoverScale,
   tapScale,
   animationConfig,
-  springTransition,
+  springConfig,
 };

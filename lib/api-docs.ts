@@ -196,12 +196,12 @@ export function generateOpenApiSpec() {
   const spec = {
     openapi: '3.0.0',
     info: {
-      title: 'EyTeacher API',
+      title: 'LogisticBot API',
       version: '1.0.0',
       description: generateDescription(routes),
       contact: {
         name: 'API Support',
-        email: 'support@eyteacher.com',
+        email: 'support@logisticbot.com',
       },
     },
     servers: [
@@ -235,7 +235,7 @@ export function generateOpenApiSpec() {
 
 function generateDescription(routes: RouteInfo[]): string {
   const categories = [...new Set(routes.map(r => r.tags?.[0] || 'General'))];
-  return `EyTeacher Educational Platform API\n\nAvailable endpoints:\n${categories.map(c => `- ${c}`).join('\n')}`;
+  return `LogisticBot Logistics Platform API\n\nAvailable endpoints:\n${categories.map(c => `- ${c}`).join('\n')}`;
 }
 
 function generatePaths(routes: RouteInfo[]): Record<string, any> {

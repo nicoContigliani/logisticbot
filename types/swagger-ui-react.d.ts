@@ -1,0 +1,14 @@
+declare module 'swagger-ui-react' {
+  import { ComponentType } from 'react';
+  
+  interface SwaggerUIProps {
+    url?: string;
+    spec?: object;
+    layout?: string;
+    persistAuthorization?: boolean;
+    [key: string]: any;
+  }
+  
+  const SwaggerUI: ComponentType<SwaggerUIProps>;
+  export default SwaggerUI;
+}

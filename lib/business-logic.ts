@@ -1,6 +1,6 @@
 // ==================== BUSINESS LOGIC LAYER ====================
 // This file provides the structure for business logic integration
-// Extend these services as needed for your educational platform
+// Extend these services as needed for your logistics platform
 
 import { supabase } from './supabase';
 import { uploadImage, deleteImage, validateImageFile } from './file-utils';
@@ -192,34 +192,7 @@ export class FileService {
 // ==================== REPORT SERVICE ====================
 
 export class ReportService {
-  async exportStudentsToExcel(studentData: any[]): Promise<void> {
-    const formattedData = studentData.map(student => ({
-      'Nombre': student.firstName,
-      'Apellido': student.lastName,
-      'Email': student.email,
-      'Fecha de Registro': new Date(student.createdAt).toLocaleDateString(),
-      'Estado': student.isActive ? 'Activo' : 'Inactivo',
-    }));
-
-    downloadExcelFile(formattedData, 'estudiantes.xlsx');
-  }
-
-  async exportGradesToExcel(gradeData: any[]): Promise<void> {
-    const formattedData = gradeData.map(grade => ({
-      'Estudiante': grade.studentName,
-      'Curso': grade.courseName,
-      'Nota': grade.score,
-      'Fecha': new Date(grade.date).toLocaleDateString(),
-      'Comentarios': grade.comments || '',
-    }));
-
-    downloadExcelFile(formattedData, 'calificaciones.xlsx');
-  }
-
-  async importStudentsFromExcel(file: File): Promise<any[]> {
-    const result = await readExcelFile(file);
-    return result.sheets[0].data;
-  }
+  // Education-related methods removed
 }
 
 // ==================== NOTIFICATION SERVICE ====================

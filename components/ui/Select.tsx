@@ -1,11 +1,6 @@
 'use client';
 
 import React, { memo } from 'react';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectProps } from '@mui/material/Select';
-import InputLabel from '@mui/material/InputLabel';
-import FormHelperText from '@mui/material/FormHelperText';
 
 interface Option {
   value: string;
@@ -40,46 +35,57 @@ export function SelectField({
   onBlur,
   disabled,
   required,
-  ...props
 }: CustomSelectProps) {
-  const handleChange = (event: any) => {
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (onChange) {
-      onChange(event.target.value as string);
+      onChange(event.target.value);
     }
   };
 
   return (
-    <FormControl fullWidth={fullWidth} error={!!error}>
-      {label && <InputLabel>{label}</InputLabel>}
-      <Select
+    <div className={fullWidth ? 'w-full' : ''}>
+      {label && (
+        <label 
+          htmlFor={id || name}
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          {label}
+          {required && <span className="text-red-500 ml-1">*</span>}
+        </label>
+      )}
+      <select
+        id={id || name}
+        name={name}
         value={value || ''}
-        label={label}
         onChange={handleChange}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'primary.main',
-              },
-            },
-            '&.Mui-focused': {
-              boxShadow: '0 0 0 3px rgba(99, 102, 241, 0.2)',
-            },
-          },
-        }}
-        {...props}
+        onBlur={onBlur}
+        disabled={disabled}
+        required={required}
+        className={`
+          w-full px-4 py-2
+          border rounded-lg
+          bg-white
+          transition-all duration-200
+          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+          ${error
+            ? 'border-red-500 focus:ring-red-500'
+            : 'border-gray-300 hover:border-gray-400'
+          }
+          ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}
+        `}
       >
         {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
+          <option key={option.value} value={option.value}>
             {option.label}
-          </MenuItem>
+          </option>
         ))}
-      </Select>
+      </select>
       {(error || helperText) && (
-        <FormHelperText>{error || helperText}</FormHelperText>
+        <p className={`mt-1 text-sm ${error ? 'text-red-600' : 'text-gray-500'}`}>
+          {error || helperText}
+        </p>
       )}
-    </FormControl>
+    </div>
   );
 }
 

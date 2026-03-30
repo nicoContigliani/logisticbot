@@ -1,160 +1,373 @@
 'use client';
 
-import { useAuth, useUser } from '@clerk/nextjs';
-import { motion } from 'framer-motion';
-import Box from '@mui/material/Box';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import SchoolIcon from '@mui/icons-material/School';
-import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import { useState, useCallback } from 'react';
+import { useUser } from '@clerk/nextjs';
+import { parseFile, toLogisticsRecords, ParsedData, LogisticsRecord } from '@/lib/file-parsers';
+import { exportToCSV, exportToExcel, exportToXML } from '@/lib/file-parsers';
+import './dashboard.css';
 
-const stats = [
-  { label: 'Courses Enrolled', value: '12', icon: <SchoolIcon />, color: '#6366f1' },
-  { label: 'Hours Learned', value: '48', icon: <PlayCircleIcon />, color: '#ec4899' },
-  { label: 'Certificates', value: '5', icon: <EmojiEventsIcon />, color: '#f59e0b' },
-  { label: 'Progress', value: '72%', icon: <TrendingUpIcon />, color: '#10b981' },
-];
-
-const recentCourses = [
-  { title: 'Introduction to React', progress: 80, thumbnail: 'https://picsum.photos/seed/react/300/200' },
-  { title: 'Advanced TypeScript', progress: 60, thumbnail: 'https://picsum.photos/seed/ts/300/200' },
-  { title: 'Next.js Fundamentals', progress: 45, thumbnail: 'https://picsum.photos/seed/next/300/200' },
-];
+interface UploadedFile {
+  id: string;
+  name: string;
+  type: string;
+  size: number;
+  status: 'uploading' | 'processing' | 'completed' | 'error';
+  progress: number;
+  data?: ParsedData;
+  records?: LogisticsRecord[];
+  error?: string;
+}
 
 export default function DashboardPage() {
-  const { userId } = useAuth();
   const { user } = useUser();
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [selectedFile, setSelectedFile] = useState<UploadedFile | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleFileUpload = useCallback(async (files: FileList | null) => {
+    if (!files) return;
+
+    const newFiles: UploadedFile[] = Array.from(files).map((file) => ({
+      id: `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      name: file.name,
+      type: file.name.split('.').pop()?.toUpperCase() || 'UNKNOWN',
+      size: file.size,
+      status: 'uploading',
+      progress: 0,
+    }));
+
+    setUploadedFiles((prev) => [...prev, ...newFiles]);
+
+    // Process each file
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const fileId = newFiles[i].id;
+
+      try {
+        // Simulate upload progress
+        for (let progress = 0; progress <= 100; progress += 10) {
+          await new Promise((resolve) => setTimeout(resolve, 50));
+          setUploadedFiles((prev) =>
+            prev.map((f) => (f.id === fileId ? { ...f, progress } : f))
+          );
+        }
+
+        // Update status to processing
+        setUploadedFiles((prev) =>
+          prev.map((f) => (f.id === fileId ? { ...f, status: 'processing' } : f))
+        );
+
+        // Parse file
+        const data = await parseFile(file);
+        const records = toLogisticsRecords(data);
+
+        // Update with completed status
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? { ...f, status: 'completed', data, records, progress: 100 }
+              : f
+          )
+        );
+      } catch (error) {
+        setUploadedFiles((prev) =>
+          prev.map((f) =>
+            f.id === fileId
+              ? { ...f, status: 'error', error: (error as Error).message }
+              : f
+          )
+        );
+      }
+    }
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragging(false);
+      handleFileUpload(e.dataTransfer.files);
+    },
+    [handleFileUpload]
+  );
+
+  const handleExport = (format: 'csv' | 'excel' | 'xml') => {
+    if (!selectedFile?.records) return;
+
+    const filename = selectedFile.name.replace(/\.[^/.]+$/, '');
+
+    switch (format) {
+      case 'csv':
+        exportToCSV(selectedFile.records, filename);
+        break;
+      case 'excel':
+        exportToExcel(selectedFile.records, filename);
+        break;
+      case 'xml':
+        exportToXML(selectedFile.records, filename);
+        break;
+    }
+  };
+
+  const stats = [
+    {
+      title: 'Total Shipments',
+      value: uploadedFiles.reduce((acc, f) => acc + (f.records?.length || 0), 0),
+      icon: '🚚',
+      color: '#3b82f6',
+    },
+    {
+      title: 'Files Processed',
+      value: uploadedFiles.filter((f) => f.status === 'completed').length,
+      icon: '📄',
+      color: '#22c55e',
+    },
+    {
+      title: 'Active Tracking',
+      value: uploadedFiles.reduce(
+        (acc, f) =>
+          acc +
+          (f.records?.filter((r) => r.status?.toLowerCase().includes('transit')).length || 0),
+        0
+      ),
+      icon: '📊',
+      color: '#f59e0b',
+    },
+    {
+      title: 'Inventory Items',
+      value: uploadedFiles.reduce(
+        (acc, f) =>
+          acc +
+          (f.records?.filter((r) => r.status?.toLowerCase().includes('inventory')).length || 0),
+        0
+      ),
+      icon: '📦',
+      color: '#06b6d4',
+    },
+  ];
 
   return (
-    <Container maxWidth="xl">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Welcome Section */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            Welcome back, {user?.firstName || 'Student'}!
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Continue your learning journey and track your progress
-          </Typography>
-        </Box>
+    <div className="dashboard-page">
+      {/* Header */}
+      <div className="dashboard-header">
+        <div className="header-content">
+          <div className="header-left">
+            <div className="logo-box">
+              <span className="logo-icon">🚚</span>
+            </div>
+            <h1 className="logo-text">LogisticBot</h1>
+          </div>
+          <div className="header-right">
+            <span className="welcome-text">Welcome, {user?.firstName || 'User'}</span>
+            <div className="user-avatar">
+              {user?.firstName?.[0] || 'U'}
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <div className="dashboard-content">
         {/* Stats Grid */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          {stats.map((stat, index) => (
-            <Grid size={{ xs: 6, md: 3 }} key={stat.label}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-              >
-                <Card
-                  sx={{
-                    background: `linear-gradient(135deg, ${stat.color}15 0%, ${stat.color}05 100%)`,
-                    border: `1px solid ${stat.color}30`,
-                  }}
-                >
-                  <CardContent>
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <Box>
-                        <Typography variant="body2" color="text.secondary" gutterBottom>
-                          {stat.label}
-                        </Typography>
-                        <Typography variant="h4" fontWeight="bold" sx={{ color: stat.color }}>
-                          {stat.value}
-                        </Typography>
-                      </Box>
-                      <Box
-                        sx={{
-                          p: 1.5,
-                          borderRadius: 2,
-                          bgcolor: `${stat.color}20`,
-                          color: stat.color,
-                        }}
-                      >
-                        {stat.icon}
-                      </Box>
-                    </Box>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </Grid>
+        <div className="stats-grid">
+          {stats.map((stat) => (
+            <div key={stat.title} className="stat-card">
+              <div className="stat-content">
+                <div className="stat-info">
+                  <span className="stat-title">{stat.title}</span>
+                  <span className="stat-value">{stat.value}</span>
+                </div>
+                <div className="stat-icon" style={{ backgroundColor: `${stat.color}15`, color: stat.color }}>
+                  {stat.icon}
+                </div>
+              </div>
+            </div>
           ))}
-        </Grid>
+        </div>
 
-        {/* Recent Courses */}
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Continue Learning
-        </Typography>
-        <Grid container spacing={3}>
-          {recentCourses.map((course, index) => (
-            <Grid size={{ xs: 12, md: 4 }} key={course.title}>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 + index * 0.1, duration: 0.5 }}
+        {/* Main Content */}
+        <div className="main-grid">
+          {/* File Upload Section */}
+          <div className="upload-section">
+            <div className="section-card">
+              <h2 className="section-title">Upload Files</h2>
+              <p className="section-description">
+                Upload XML, Excel, CSV, or CASL files to process logistics data
+              </p>
+
+              {/* Drop Zone */}
+              <div
+                className={`drop-zone ${isDragging ? 'drop-zone-active' : ''}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('file-input')?.click()}
               >
-                <Card sx={{ cursor: 'pointer' }}>
-                  <Box
-                    sx={{
-                      height: 160,
-                      backgroundImage: `url(${course.thumbnail})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      borderRadius: '16px 16px 0 0',
-                    }}
-                  />
-                  <CardContent>
-                    <Typography variant="h6" fontWeight="600" gutterBottom>
-                      {course.title}
-                    </Typography>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      <Box
-                        sx={{
-                          flexGrow: 1,
-                          height: 6,
-                          borderRadius: 3,
-                          bgcolor: 'grey.200',
-                          overflow: 'hidden',
-                        }}
+                <input
+                  id="file-input"
+                  type="file"
+                  multiple
+                  accept=".xml,.xlsx,.xls,.csv,.casl"
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                  style={{ display: 'none' }}
+                />
+                <span className="drop-zone-icon">☁️</span>
+                <h3 className="drop-zone-title">Drag & drop files here</h3>
+                <p className="drop-zone-text">or click to browse</p>
+                <div className="file-types">
+                  {['XML', 'XLSX', 'CSV', 'CASL'].map((type) => (
+                    <span key={type} className="file-type-badge">
+                      {type}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Uploaded Files List */}
+              {uploadedFiles.length > 0 && (
+                <div className="uploaded-files">
+                  <h3 className="uploaded-files-title">Uploaded Files</h3>
+                  <div className="files-list">
+                    {uploadedFiles.map((file) => (
+                      <div
+                        key={file.id}
+                        className={`file-item ${selectedFile?.id === file.id ? 'file-item-selected' : ''}`}
+                        onClick={() => file.status === 'completed' && setSelectedFile(file)}
                       >
-                        <Box
-                          sx={{
-                            width: `${course.progress}%`,
-                            height: '100%',
-                            borderRadius: 3,
-                            background: 'linear-gradient(90deg, #6366f1, #818cf8)',
-                          }}
-                        />
-                      </Box>
-                      <Typography variant="body2" fontWeight="600" color="primary">
-                        {course.progress}%
-                      </Typography>
-                    </Box>
-                    <Button
-                      variant="contained"
-                      fullWidth
-                      sx={{ mt: 2 }}
-                    >
-                      Continue
-                    </Button>
-                  </CardContent>
-                </Card>
-              </motion.div>
-            </Grid>
-          ))}
-        </Grid>
-      </motion.div>
-    </Container>
+                        <div className="file-item-header">
+                          <div className="file-item-left">
+                            <span className="file-icon">📄</span>
+                            <span className="file-name">{file.name}</span>
+                          </div>
+                          <div className="file-item-right">
+                            {file.status === 'completed' && (
+                              <span className="status-icon status-success">✓</span>
+                            )}
+                            {file.status === 'error' && (
+                              <span className="status-icon status-error">✗</span>
+                            )}
+                            <span className="file-type">{file.type}</span>
+                          </div>
+                        </div>
+                        {file.status === 'uploading' && (
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${file.progress}%` }} />
+                          </div>
+                        )}
+                        {file.status === 'processing' && (
+                          <div className="progress-bar">
+                            <div className="progress-fill progress-indeterminate" />
+                          </div>
+                        )}
+                        {file.status === 'completed' && file.records && (
+                          <span className="file-records">{file.records.length} records processed</span>
+                        )}
+                        {file.status === 'error' && (
+                          <span className="file-error">{file.error}</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Data Preview Section */}
+          <div className="preview-section">
+            <div className="section-card">
+              <div className="preview-header">
+                <div>
+                  <h2 className="section-title">Data Preview</h2>
+                  <p className="section-description">
+                    {selectedFile ? `${selectedFile.name} - ${selectedFile.records?.length || 0} records` : 'Select a file to preview'}
+                  </p>
+                </div>
+                {selectedFile && (
+                  <div className="export-buttons">
+                    <button className="export-btn" onClick={() => handleExport('csv')}>
+                      CSV
+                    </button>
+                    <button className="export-btn" onClick={() => handleExport('excel')}>
+                      Excel
+                    </button>
+                    <button className="export-btn" onClick={() => handleExport('xml')}>
+                      XML
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {selectedFile?.records ? (
+                <div className="table-container">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        {selectedFile.data?.headers.slice(0, 6).map((header) => (
+                          <th key={header}>{header}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedFile.records.slice(0, 10).map((record, index) => (
+                        <tr key={index}>
+                          {selectedFile.data?.headers.slice(0, 6).map((header) => (
+                            <td key={header}>
+                              {String(record[header] || '-')}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {selectedFile.records.length > 10 && (
+                    <p className="table-footer">
+                      Showing 10 of {selectedFile.records.length} records
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <div className="empty-state">
+                  <span className="empty-icon">📦</span>
+                  <h3 className="empty-title">No data to display</h3>
+                  <p className="empty-text">Upload a file to see the preview</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="quick-actions">
+          <h2 className="section-title">Quick Actions</h2>
+          <div className="actions-grid">
+            {[
+              { title: 'Track Shipment', icon: '🚚', color: '#3b82f6' },
+              { title: 'View Inventory', icon: '📦', color: '#22c55e' },
+              { title: 'Generate Report', icon: '📊', color: '#f59e0b' },
+            ].map((action) => (
+              <div key={action.title} className="action-card">
+                <div className="action-content">
+                  <div className="action-icon" style={{ backgroundColor: `${action.color}15`, color: action.color }}>
+                    {action.icon}
+                  </div>
+                  <span className="action-title">{action.title}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+
+      </div>
+    </div>
   );
 }

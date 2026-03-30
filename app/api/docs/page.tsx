@@ -3,9 +3,7 @@
 import { useEffect, useState } from 'react';
 import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
+import { Box, CircularProgress, Typography } from '@/components/metro';
 
 export default function SwaggerDocsPage() {
   const [spec, setSpec] = useState<any>(null);
@@ -28,13 +26,13 @@ export default function SwaggerDocsPage() {
   if (loading) {
     return (
       <Box
-        sx={{
+        style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
           flexDirection: 'column',
-          gap: 2,
+          gap: 16,
         }}
       >
         <CircularProgress />
@@ -46,22 +44,22 @@ export default function SwaggerDocsPage() {
   if (error) {
     return (
       <Box
-        sx={{
+        style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
           minHeight: '100vh',
           flexDirection: 'column',
-          gap: 2,
+          gap: 16,
         }}
       >
-        <Typography color="error">Error loading API docs: {error}</Typography>
+        <Typography color="#d32f2f">Error loading API docs: {error}</Typography>
       </Box>
     );
   }
 
   return (
-    <Box sx={{ width: '100%', minHeight: '100vh' }}>
+    <Box style={{ width: '100%', minHeight: '100vh' }}>
       <SwaggerUI spec={spec} />
     </Box>
   );

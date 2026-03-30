@@ -1,40 +1,25 @@
 'use client';
 
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import TablePagination from '@mui/material/TablePagination';
-import TableSortLabel from '@mui/material/TableSortLabel';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import IconButton from '@mui/material/IconButton';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import Chip from '@mui/material/Chip';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Tooltip from '@mui/material/Tooltip';
-import Menu from '@mui/material/Menu';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import CloseIcon from '@mui/icons-material/Close';
-import MenuItem from '@mui/material/MenuItem';
-import SearchIcon from '@mui/icons-material/Search';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import AddIcon from '@mui/icons-material/Add';
+import { 
+  Box, 
+  Paper, 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableRow, 
+  IconButton, 
+  Input, 
+  Chip, 
+  CircularProgress, 
+  Typography, 
+  Menu, 
+  MenuItem, 
+  Alert, 
+  Checkbox
+} from '@/components/metro';
+import { icons } from '@/components/mui';
 
 // ==================== TYPES ====================
 
@@ -530,7 +515,7 @@ export function DataTable<T extends Record<string, any>>({
   }, [sortField]);
 
   // Page change handlers
-  const handleChangePage = useCallback((_event: unknown, newPage: number) => {
+  const handleChangePage = useCallback((newPage: number) => {
     if (pagination.serverSide && pagination.onPageChange) {
       setIsLoading(true);
       pagination.onPageChange(newPage, rowsPerPage).then((result) => {
@@ -543,15 +528,14 @@ export function DataTable<T extends Record<string, any>>({
     }
   }, [pagination.serverSide, pagination.onPageChange, rowsPerPage]);
 
-  const handleChangeRowsPerPage = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const newLimit = parseInt(event.target.value, 10);
+  const handleChangeRowsPerPage = useCallback((newLimit: number) => {
     setRowsPerPage(newLimit);
     setPage(0);
   }, []);
 
   // Selection handlers
-  const handleSelectAll = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.checked) {
+  const handleSelectAll = useCallback((checked: boolean) => {
+    if (checked) {
       setSelected(paginatedData);
       onSelectionChange?.(paginatedData);
     } else {
@@ -605,7 +589,7 @@ export function DataTable<T extends Record<string, any>>({
   }, [handleActionClose]);
 
   // Tab change
-  const handleTabChange = useCallback((_event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = useCallback((newValue: number) => {
     setActiveTab(newValue);
     setPage(0);
     setSelected([]);
@@ -623,22 +607,17 @@ export function DataTable<T extends Record<string, any>>({
       return (
         <Chip
           label={value}
-          size="small"
-          sx={{
-            backgroundColor: column.color || 'primary.main',
-            color: 'white',
-          }}
+          color={column.color || '#0078d4'}
         />
       );
     }
 
     if (column.type === 'image') {
       return value ? (
-        <Box
-          component="img"
+        <img
           src={value}
           alt=""
-          sx={{ width: 40, height: 40, borderRadius: 1, objectFit: 'cover' }}
+          style={{ width: 40, height: 40, borderRadius: 4, objectFit: 'cover' }}
         />
       ) : null;
     }
@@ -647,8 +626,7 @@ export function DataTable<T extends Record<string, any>>({
       return (
         <Chip
           label={value ? 'Yes' : 'No'}
-          size="small"
-          color={value ? 'success' : 'default'}
+          color={value ? '#107c10' : '#666'}
         />
       );
     }
@@ -659,9 +637,9 @@ export function DataTable<T extends Record<string, any>>({
   // Get icon for action type
   const getActionIcon = (type: ActionConfig<T>['type']) => {
     switch (type) {
-      case 'view': return <VisibilityIcon fontSize="small" />;
-      case 'edit': return <EditIcon fontSize="small" />;
-      case 'delete': return <DeleteIcon fontSize="small" />;
+      case 'view': return icons.Visibility;
+      case 'edit': return icons.Edit;
+      case 'delete': return icons.Delete;
       default: return null;
     }
   };
@@ -669,35 +647,33 @@ export function DataTable<T extends Record<string, any>>({
   // Render loading state
   if (isLoading && data.length === 0) {
     return (
-      <Paper sx={{ p: 4, textAlign: 'center' }}>
+      <Paper style={{ padding: 32, textAlign: 'center' }}>
         <CircularProgress />
-        <Typography sx={{ mt: 2 }}>Loading data...</Typography>
+        <Typography style={{ marginTop: 16 }}>Loading data...</Typography>
       </Paper>
     );
   }
 
   return (
     <Paper
-      elevation={0}
-      sx={{
+      style={{
         width: '100%',
         overflow: 'hidden',
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: 'divider',
+        borderRadius: 8,
+        border: '1px solid #eee',
         ...sx,
       }}
     >
       {/* Header */}
-      <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+      <Box style={{ padding: 16, borderBottom: '1px solid #eee' }}>
         {/* Title & Subtitle */}
         {title && (
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="h6" component="h2" fontWeight={600}>
+          <Box style={{ marginBottom: 8 }}>
+            <Typography variant="h6" weight={600}>
               {title}
             </Typography>
             {subtitle && (
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" color="#666">
                 {subtitle}
               </Typography>
             )}
@@ -706,73 +682,62 @@ export function DataTable<T extends Record<string, any>>({
 
         {/* Tabs */}
         {showTabs && tabs.length > 0 && (
-          <Tabs
-            value={activeTab}
-            onChange={handleTabChange}
-            sx={{ mb: 2, minHeight: 40 }}
-            variant="scrollable"
-            scrollButtons="auto"
-          >
+          <Box style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
             {tabs.map((tab, index) => (
-              <Tab
+              <button
                 key={tab.id}
-                label={
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    {tab.label}
-                    {tab.badge && <Chip label={tab.badge} size="small" color="primary" />}
-                  </Box>
-                }
-                sx={{ minHeight: 40 }}
-              />
+                onClick={() => handleTabChange(index)}
+                style={{
+                  padding: '8px 16px',
+                  background: activeTab === index ? '#0078d4' : 'transparent',
+                  color: activeTab === index ? 'white' : '#333',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '0.875rem',
+                  fontFamily: 'Segoe UI, sans-serif',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
+              >
+                {tab.label}
+                {tab.badge && <Chip label={String(tab.badge)} color="#0078d4" />}
+              </button>
             ))}
-          </Tabs>
+          </Box>
         )}
 
         {/* Toolbar */}
         {filter.enabled && (
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Box style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
             {/* Search */}
             {filter.searchEnabled && (
-              <TextField
-                size="small"
+              <Input
                 placeholder={filter.searchPlaceholder}
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
-                sx={{ minWidth: 250 }}
+                onChange={(value) => setSearchTerm(value)}
+                style={{ minWidth: 250 }}
               />
             )}
 
-            <Box sx={{ flexGrow: 1 }} />
+            <Box style={{ flexGrow: 1 }} />
 
             {/* Action Buttons */}
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            <Box style={{ display: 'flex', gap: 8 }}>
               {onRefresh && (
-                <Tooltip title="Refresh">
-                  <IconButton onClick={onRefresh} size="small">
-                    <RefreshIcon />
-                  </IconButton>
-                </Tooltip>
+                <IconButton onClick={onRefresh} size={24}>
+                  {icons.Refresh()}
+                </IconButton>
               )}
               {onExport && (
-                <Tooltip title="Export CSV">
-                  <IconButton onClick={handleExport} size="small">
-                    <FileDownloadIcon />
-                  </IconButton>
-                </Tooltip>
+                <IconButton onClick={handleExport} size={24}>
+                  {icons.Download()}
+                </IconButton>
               )}
               {onAdd && (
-                <Tooltip title="Add New">
-                  <IconButton onClick={onAdd} size="small" color="primary">
-                    <AddIcon />
-                  </IconButton>
-                </Tooltip>
+                <IconButton onClick={onAdd} size={24} color="#0078d4">
+                  {icons.Add()}
+                </IconButton>
               )}
             </Box>
           </Box>
@@ -782,28 +747,29 @@ export function DataTable<T extends Record<string, any>>({
       {/* Error Alert */}
       {localError && (
         <Alert 
-          severity="error" 
-          action={
-            <IconButton size="small" onClick={handleErrorClose}>
-              <CloseIcon />
-            </IconButton>
-          }
+          severity="error"
+          style={{ margin: 16 }}
         >
-          {localError}
+          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            {localError}
+            <IconButton onClick={handleErrorClose} size={20}>
+              {icons.Close()}
+            </IconButton>
+          </Box>
         </Alert>
       )}
 
       {/* Loading Overlay */}
       {isLoading && (
-        <Box sx={{ position: 'relative' }}>
+        <Box style={{ position: 'relative' }}>
           <Box
-            sx={{
+            style={{
               position: 'absolute',
               top: 0,
               left: 0,
               right: 0,
               bottom: 0,
-              bgcolor: 'rgba(255,255,255,0.7)',
+              backgroundColor: 'rgba(255,255,255,0.7)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -816,20 +782,19 @@ export function DataTable<T extends Record<string, any>>({
       )}
 
       {/* Table */}
-      <TableContainer sx={{ maxHeight: 600 }}>
-        <Table stickyHeader size={dense ? 'small' : 'medium'}>
+      <Box style={{ maxHeight: 600, overflow: 'auto' }}>
+        <Table>
           <TableHead>
             <TableRow>
               {/* Row Numbers */}
               {showRowNumbers && (
-                <TableCell sx={{ width: 50, bgcolor: 'background.paper' }}>#</TableCell>
+                <TableCell style={{ width: 50, fontWeight: 600 }}>#</TableCell>
               )}
               
               {/* Selection Checkbox */}
               {selectable && (
-                <TableCell padding="checkbox" sx={{ bgcolor: 'background.paper' }}>
+                <TableCell style={{ width: 50 }}>
                   <Checkbox
-                    indeterminate={selected.length > 0 && selected.length < paginatedData.length}
                     checked={paginatedData.length > 0 && selected.length === paginatedData.length}
                     onChange={handleSelectAll}
                   />
@@ -842,22 +807,33 @@ export function DataTable<T extends Record<string, any>>({
                 .map((column) => (
                   <TableCell
                     key={column.id}
-                    align={column.align || 'left'}
-                    sx={{
+                    style={{
                       minWidth: column.minWidth,
                       width: column.width,
                       fontWeight: 600,
-                      bgcolor: 'background.paper',
+                      textAlign: column.align || 'left',
                     }}
                   >
                     {column.sortable !== false ? (
-                      <TableSortLabel
-                        active={sortField === column.id}
-                        direction={sortField === column.id ? sortDirection : 'asc'}
+                      <button
                         onClick={() => handleSort(column.id)}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontWeight: 600,
+                          fontSize: '0.875rem',
+                          fontFamily: 'Segoe UI, sans-serif',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
                       >
                         {column.label}
-                      </TableSortLabel>
+                        {sortField === column.id && (
+                          <span>{sortDirection === 'asc' ? '↑' : '↓'}</span>
+                        )}
+                      </button>
                     ) : (
                       column.label
                     )}
@@ -866,7 +842,7 @@ export function DataTable<T extends Record<string, any>>({
 
               {/* Actions Column */}
               {showActions && actions.length > 0 && (
-                <TableCell align="right" sx={{ width: 100, bgcolor: 'background.paper' }}>
+                <TableCell style={{ width: 100, textAlign: 'right', fontWeight: 600 }}>
                   Actions
                 </TableCell>
               )}
@@ -875,36 +851,36 @@ export function DataTable<T extends Record<string, any>>({
           <TableBody>
             {paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length + (showActions ? 1 : 0) + (showRowNumbers ? 1 : 0)} sx={{ textAlign: 'center', py: 4 }}>
-                  <Typography color="text.secondary">No data available</Typography>
+                <TableCell 
+                  colSpan={columns.length + (showActions ? 1 : 0) + (showRowNumbers ? 1 : 0) + (selectable ? 1 : 0)} 
+                  style={{ textAlign: 'center', padding: 32 }}
+                >
+                  <Typography color="#666">No data available</Typography>
                 </TableCell>
               </TableRow>
             ) : (
               paginatedData.map((row, rowIndex) => (
                 <React.Fragment key={row.id || rowIndex}>
                   <TableRow
-                    hover={hoverable}
-                    selected={selected.some((r) => r === row || JSON.stringify(r) === JSON.stringify(row))}
-                    sx={{
-                      '&:nth-of-type(odd)': striped ? { bgcolor: 'action.hover' } : {},
+                    onClick={selectable ? () => handleSelectRow(row) : undefined}
+                    style={{
+                      backgroundColor: striped && rowIndex % 2 === 1 ? '#f9f9f9' : 'transparent',
                       cursor: selectable ? 'pointer' : 'default',
                     }}
-                    onClick={selectable ? () => handleSelectRow(row) : undefined}
                   >
                     {/* Row Numbers */}
                     {showRowNumbers && (
-                      <TableCell sx={{ width: 50 }}>
+                      <TableCell style={{ width: 50 }}>
                         {page * rowsPerPage + rowIndex + 1}
                       </TableCell>
                     )}
 
                     {/* Selection Checkbox */}
                     {selectable && (
-                      <TableCell padding="checkbox">
+                      <TableCell style={{ width: 50 }}>
                         <Checkbox
                           checked={selected.some((r) => r === row || JSON.stringify(r) === JSON.stringify(row))}
                           onChange={() => handleSelectRow(row)}
-                          onClick={(e) => e.stopPropagation()}
                         />
                       </TableCell>
                     )}
@@ -915,8 +891,10 @@ export function DataTable<T extends Record<string, any>>({
                       .map((column) => (
                         <TableCell
                           key={column.id}
-                          align={column.align || 'left'}
-                          sx={column.sx}
+                          style={{
+                            textAlign: column.align || 'left',
+                            ...column.sx,
+                          }}
                         >
                           {renderCell(column, row, rowIndex)}
                         </TableCell>
@@ -924,15 +902,12 @@ export function DataTable<T extends Record<string, any>>({
 
                     {/* Actions */}
                     {showActions && actions.length > 0 && (
-                      <TableCell align="right">
+                      <TableCell style={{ textAlign: 'right' }}>
                         <IconButton
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleActionClick(row, e);
-                          }}
+                          size={24}
+                          onClick={() => handleActionClick(row, {} as React.MouseEvent<HTMLElement>)}
                         >
-                          <MoreVertIcon />
+                          {icons.MoreVert()}
                         </IconButton>
                       </TableCell>
                     )}
@@ -941,7 +916,10 @@ export function DataTable<T extends Record<string, any>>({
                   {/* Expanded Row */}
                   {expandableRows && expandedRows.has(row.id || rowIndex) && renderExpandedRow && (
                     <TableRow>
-                      <TableCell colSpan={columns.length + (showActions ? 1 : 0) + (showRowNumbers ? 1 : 0)} sx={{ py: 0 }}>
+                      <TableCell 
+                        colSpan={columns.length + (showActions ? 1 : 0) + (showRowNumbers ? 1 : 0) + (selectable ? 1 : 0)} 
+                        style={{ padding: 0 }}
+                      >
                         {renderExpandedRow(row)}
                       </TableCell>
                     </TableRow>
@@ -951,24 +929,61 @@ export function DataTable<T extends Record<string, any>>({
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+      </Box>
 
       {/* Pagination */}
       {showPagination && (
-        <TablePagination
-          rowsPerPageOptions={pagination.rowsPerPageOptions}
-          component="div"
-          count={pagination.serverSide ? -1 : processedData.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
+        <Box style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          padding: '12px 16px',
+          borderTop: '1px solid #eee'
+        }}>
+          <Typography variant="body2" color="#666">
+            Rows per page:
+            <select
+              value={rowsPerPage}
+              onChange={(e) => handleChangeRowsPerPage(Number(e.target.value))}
+              style={{
+                marginLeft: 8,
+                padding: '4px 8px',
+                border: '1px solid #ccc',
+                borderRadius: 4,
+                fontSize: '0.875rem',
+              }}
+            >
+              {pagination.rowsPerPageOptions?.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </Typography>
+          <Typography variant="body2" color="#666">
+            {page * rowsPerPage + 1}-{Math.min((page + 1) * rowsPerPage, processedData.length)} of {processedData.length}
+          </Typography>
+          <Box style={{ display: 'flex', gap: 8 }}>
+            <IconButton
+              onClick={() => handleChangePage(page - 1)}
+              disabled={page === 0}
+              size={24}
+            >
+              {icons.ArrowBack()}
+            </IconButton>
+            <IconButton
+              onClick={() => handleChangePage(page + 1)}
+              disabled={(page + 1) * rowsPerPage >= processedData.length}
+              size={24}
+            >
+              {icons.ArrowForward()}
+            </IconButton>
+          </Box>
+        </Box>
       )}
 
       {/* Actions Menu */}
       <Menu
-        anchorEl={actionAnchor?.element}
         open={Boolean(actionAnchor)}
         onClose={handleActionClose}
       >
@@ -976,20 +991,14 @@ export function DataTable<T extends Record<string, any>>({
           <MenuItem
             key={action.id}
             onClick={() => actionAnchor && handleActionExecute(action, actionAnchor.row)}
-            disabled={action.disabled?.(actionAnchor?.row as T)}
           >
-            <ListItemIcon>
-              {action.icon || getActionIcon(action.type)}
-            </ListItemIcon>
-            <ListItemText primary={action.label} />
+            <span style={{ marginRight: 8 }}>{action.icon || getActionIcon(action.type)?.()}</span>
+            {action.label}
           </MenuItem>
         ))}
       </Menu>
     </Paper>
   );
 }
-
-// Need to import Checkbox
-import Checkbox from '@mui/material/Checkbox';
 
 export default DataTable;

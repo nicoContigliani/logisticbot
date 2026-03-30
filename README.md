@@ -1,6 +1,6 @@
 # LogisticBot - Logistics Management System
 
-A modern, minimalist logistics management platform built with Next.js, featuring file parsing capabilities for XML, Excel, CSV, and CASL formats.
+A modern logistics management platform built with Next.js, featuring file parsing capabilities for XML, Excel, CSV, and CASL formats, with a Metro UI / Windows 8 inspired design.
 
 ## Features
 
@@ -8,7 +8,8 @@ A modern, minimalist logistics management platform built with Next.js, featuring
 - **Real-time Tracking**: Track shipments with automated status updates
 - **Inventory Management**: Comprehensive inventory control with alerts
 - **Analytics Dashboard**: Data visualization and reporting
-- **Minimalist Design**: Blueprint-style UI for optimal user experience
+- **Bot Communications**: Automated messaging via WhatsApp and Email
+- **Metro UI Design**: Clean, flat Windows 8 style interface
 - **High Performance**: Optimized for speed and efficiency
 
 ## Tech Stack
@@ -20,7 +21,7 @@ A modern, minimalist logistics management platform built with Next.js, featuring
 - **File Processing**: ExcelJS, PapaParse, xml2js
 - **Authorization**: CASL
 - **State Management**: Zustand
-- **Styling**: CSS Variables with Blueprint theme
+- **Styling**: CSS Variables with Metro UI theme
 
 ## Getting Started
 
@@ -73,7 +74,13 @@ logisticbot/
 │   │   ├── files/
 │   │   │   └── upload/          # File upload API
 │   │   └── logistics/           # Logistics CRUD API
-│   ├── dashboard/               # Main dashboard page
+│   ├── dashboard/
+│   │   ├── bot/
+│   │   │   ├── whatsapp/        # WhatsApp bot management
+│   │   │   ├── email/           # Email bot management
+│   │   │   └── page.tsx         # Bot overview page
+│   │   ├── layout.tsx           # Dashboard layout with sidebar
+│   │   └── page.tsx             # Main dashboard page
 │   ├── sign-in/                 # Authentication pages
 │   ├── sign-up/
 │   ├── layout.tsx               # Root layout
@@ -89,8 +96,26 @@ logisticbot/
 ├── hooks/                       # Custom React hooks
 ├── store/                       # Zustand state stores
 ├── types/                       # TypeScript type definitions
+├── theme/
+│   └── metro-theme.ts           # Metro UI theme configuration
 └── public/                      # Static assets
 ```
+
+## Dashboard Features
+
+### Sidebar Navigation
+- **Dashboard**: Main overview with stats and file upload
+- **Bot**: Expandable menu with sub-items:
+  - **WhatsApp**: WhatsApp messaging automation
+  - **Email**: Email automation and tracking
+- **Profile**: User profile management
+- **Settings**: Application settings
+
+### Bot Communications
+The bot section provides:
+- **WhatsApp Bot**: Message tracking, active chats, response rates
+- **Email Bot**: Email campaigns, open rates, click rates
+- **Configuration**: Bot status and settings management
 
 ## File Parsing
 
@@ -168,24 +193,44 @@ if (ability.can('create', 'Shipment')) {
 
 ## Design System
 
-LogisticBot uses a minimalist blueprint-style design:
+LogisticBot uses a Metro UI / Windows 8 inspired design:
 
-### CSS Variables
-```css
-:root {
-  --primary-600: #2563eb;
-  --neutral-800: #1e293b;
-  --success-500: #22c55e;
-  /* ... more variables */
-}
+### Metro Theme Colors
+```typescript
+const metroPalette = {
+  blue: '#0078d4',        // Primary Windows Blue
+  magenta: '#e3008c',     // Accent Colors
+  purple: '#5c2d91',
+  green: '#107c10',
+  orange: '#d83b01',
+  teal: '#00827a',
+  red: '#d32f2f',
+  yellow: '#ffb900',
+  // Neutrals
+  dark: '#000000',
+  darkGray: '#333333',
+  gray: '#666666',
+  lightGray: '#999999',
+  lighterGray: '#cccccc',
+  lightestGray: '#f2f2f2',
+  white: '#ffffff',
+};
 ```
 
+### Design Principles
+- **Square Corners**: All components use `borderRadius: 0`
+- **Flat Design**: No gradients or shadows, clean appearance
+- **Bold Colors**: Vibrant accent colors for visual hierarchy
+- **Typography**: Segoe UI font family for Windows 8 feel
+- **Subtle Shadows**: Minimal box shadows for depth
+
 ### Components
-- `.blueprint-card` - Card component with sketch border
-- `.blueprint-btn` - Button styles
-- `.blueprint-input` - Input field styles
-- `.blueprint-table` - Table styles
-- `.blueprint-badge` - Badge/status indicator
+- `.stat-card` - Statistics display cards
+- `.bot-card` - Bot communication cards
+- `.nav-item` - Sidebar navigation items
+- `.nav-subitem` - Sub-menu items
+- `.section-card` - Content section containers
+- `.action-card` - Quick action buttons
 
 ## Performance Optimizations
 
@@ -211,5 +256,3 @@ This project is licensed under the MIT License.
 ## Support
 
 For support, email support@logisticbot.com or open an issue on GitHub.
-# logisticbot
-# logisticbot

@@ -1,0 +1,267 @@
+/* Bot Page Styles - Metro UI / Windows 8 Style */
+.bot-page {
+  min-height: 100vh;
+  background: transparent;
+}
+
+.bot-header {
+  background: white;
+  border-bottom: 1px solid #cccccc;
+  padding: 16px 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 0;
+  background: #0078d4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.logo-box .logo-icon {
+  font-size: 24px;
+  color: white;
+}
+
+.logo-box.whatsapp {
+  background: #107c10;
+}
+
+.logo-box.whatsapp .logo-icon {
+  color: white;
+}
+
+.logo-box.email {
+  background: #0078d4;
+}
+
+.logo-box.email .logo-icon {
+  color: white;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.welcome-text {
+  font-size: 14px;
+  color: #666666;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 0;
+  background: #0078d4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.bot-content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px;
+}
+
+.section-description {
+  font-size: 14px;
+  color: #666666;
+  margin: 0 0 24px 0;
+}
+
+/* Bot Grid */
+.bot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .bot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bot Card */
+.bot-card {
+  background: white;
+  border: none;
+  border-radius: 0;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.bot-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #0078d4;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.bot-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+  transform: translateY(-4px);
+}
+
+.bot-card:hover::before {
+  opacity: 1;
+}
+
+.bot-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.bot-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bot-icon::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2), transparent 70%);
+}
+
+.bot-icon.whatsapp {
+  background: #107c10;
+  color: white;
+}
+
+.bot-icon.email {
+  background: #0078d4;
+  color: white;
+}
+
+.bot-icon.config {
+  background: #5c2d91;
+  color: white;
+}
+
+.bot-card-info {
+  flex: 1;
+}
+
+.bot-card-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333333;
+  margin: 0 0 4px 0;
+}
+
+.bot-card-subtitle {
+  font-size: 13px;
+  color: #666666;
+  margin: 0;
+}
+
+.bot-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f5f5f5;
+  border-radius: 0;
+  border: 1px solid #cccccc;
+}
+
+.bot-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bot-stat-label {
+  font-size: 13px;
+  color: #666666;
+}
+
+.bot-stat-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333333;
+}
+
+.bot-stat-value.online {
+  color: #107c10;
+}
+
+.bot-btn {
+  width: 100%;
+  padding: 12px 20px;
+  background: #0078d4;
+  border: none;
+  border-radius: 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.bot-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.bot-btn:hover::before {
+  left: 100%;
+}
+
+.bot-btn:hover {
+  background: #005a9e;
+  transform: translateY(-2px);
+}

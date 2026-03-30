@@ -1,12 +1,9 @@
 'use client';
 
 import React, { memo, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import Box from '@mui/material/Box';
 import Input from './Input';
 import SelectField from './Select';
 import Button from './Button';
-import { scaleInVariants, staggerContainer } from '@/hooks/useAnimations';
 
 export interface FormFieldConfig {
   name: string;
@@ -32,9 +29,8 @@ export interface FormConfig {
   submitLabel?: string;
   showSubmitButton?: boolean;
   submitButtonProps?: {
-    variant?: 'contained' | 'outlined' | 'text';
-    color?: 'primary' | 'secondary' | 'error' | 'warning' | 'success' | 'info';
-    size?: 'small' | 'medium' | 'large';
+    variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+    size?: 'sm' | 'md' | 'lg';
     fullWidth?: boolean;
     loading?: boolean;
     disabled?: boolean;
@@ -51,6 +47,8 @@ interface DynamicFormProps {
   onBlur: (field: string) => () => void;
   onSubmit: (event: React.FormEvent) => void;
   disabled?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
 }
 
 export function DynamicForm({
@@ -63,25 +61,22 @@ export function DynamicForm({
   onBlur,
   onSubmit,
   disabled = false,
+  className,
+  style
 }: DynamicFormProps) {
   const { fields, submitLabel = 'Submit', showSubmitButton = true, submitButtonProps = {} } = formConfig;
 
   return (
-    <form onSubmit={onSubmit}>
-      <motion.div
-        variants={staggerContainer}
-        initial="initial"
-        animate="animate"
-      >
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <form onSubmit={onSubmit} className={className} style={style}>
+      <div className="animate-stagger">
+        <div className="dynamic-form">
           {fields.map((field, index) => {
             const inputType = field.inputType || 'input';
             
             return (
-              <motion.div
+              <div
                 key={field.name}
-                variants={scaleInVariants}
-                custom={index}
+                className={`animate-stagger animate-stagger-${index + 1}`}
               >
                 {inputType === 'select' && field.options ? (
                   <SelectField
@@ -108,7 +103,6 @@ export function DynamicForm({
                   <Input
                     id={field.name}
                     name={field.name}
-                    type={field.type || 'text'}
                     label={field.label}
                     value={values[field.name] || ''}
                     onChange={onChange(field.name)}
@@ -147,27 +141,26 @@ export function DynamicForm({
                     rows={field.rows}
                   />
                 )}
-              </motion.div>
+              </div>
             );
           })}
 
           {showSubmitButton && (
-            <motion.div variants={scaleInVariants}>
+            <div className="animate-stagger animate-stagger-6">
               <Button
                 type="submit"
-                variant={submitButtonProps.variant || 'contained'}
-                color={submitButtonProps.color || 'primary'}
-                size={submitButtonProps.size || 'large'}
+                variant={submitButtonProps.variant || 'primary'}
+                size={submitButtonProps.size || 'lg'}
                 fullWidth={submitButtonProps.fullWidth !== false}
                 loading={isSubmitting}
                 disabled={isSubmitting || disabled}
               >
                 {submitLabel}
               </Button>
-            </motion.div>
+            </div>
           )}
-        </Box>
-      </motion.div>
+        </div>
+      </div>
     </form>
   );
 }
@@ -179,7 +172,7 @@ export function DynamicForm({
 //     { name: 'password', type: 'password', label: 'Password', placeholder: 'Enter your password', required: true, isPassword: true }
 //   ],
 //   submitLabel: 'Sign In',
-//   submitButtonProps: { fullWidth: true, size: 'large' }
+//   submitButtonProps: { fullWidth: true, size: 'lg' }
 // };
 
 DynamicForm.displayName = 'DynamicForm';

@@ -1,76 +1,108 @@
 'use client';
 
-import { ButtonHTMLAttributes, forwardRef, memo } from 'react';
-import { motion } from 'framer-motion';
-import { CircularProgress } from '@mui/material';
-import MuiButton from '@mui/material/Button';
+import React from 'react';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'contained' | 'outlined' | 'text';
-  color?: 'primary' | 'secondary' | 'error' | 'warning' | 'success' | 'info';
-  size?: 'small' | 'medium' | 'large';
-  fullWidth?: boolean;
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
-  startIcon?: React.ReactNode;
-  endIcon?: React.ReactNode;
-  as?: 'button' | 'a';
-  href?: string;
+  icon?: React.ReactNode;
+  fullWidth?: boolean;
+  children: React.ReactNode;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  (
-    {
-      variant = 'contained',
-      color = 'primary',
-      size = 'medium',
-      fullWidth = false,
-      loading = false,
-      disabled,
-      startIcon,
-      endIcon,
-      children,
-      as,
-      href,
-      ...props
-    },
-    ref
-  ) => {
-    return (
-      <motion.div
-        whileHover={{ scale: disabled || loading ? 1 : 1.02 }}
-        whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
-        transition={{ duration: 0.2 }}
-        style={{ display: 'inline-block', width: fullWidth ? '100%' : 'auto' }}
-      >
-        <MuiButton
-          ref={ref}
-          variant={variant}
-          color={color}
-          size={size}
-          fullWidth={fullWidth}
-          disabled={disabled || loading}
-          startIcon={loading ? undefined : startIcon}
-          endIcon={loading ? undefined : endIcon}
-          component={as === 'a' ? 'a' : 'button'}
-          href={href}
-          {...props}
-        >
-          {loading && (
-            <CircularProgress
-              size={size === 'small' ? 18 : size === 'large' ? 28 : 24}
-              sx={{
-                position: 'absolute',
-                color: 'inherit',
-              }}
+const Button: React.FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  icon,
+  fullWidth = false,
+  children,
+  className = '',
+  disabled,
+  ...props
+}) => {
+  const baseStyles = `
+    inline-flex items-center justify-center gap-2
+    font-medium rounded-lg
+    transition-all duration-200
+    focus:outline-none focus:ring-2 focus:ring-offset-2
+    disabled:opacity-50 disabled:cursor-not-allowed
+    hover:scale-[1.02] active:scale-[0.98]
+    ${fullWidth ? 'w-full' : ''}
+  `;
+
+  const variants = {
+    primary: `
+      bg-blue-600 text-white
+      hover:bg-blue-700
+      focus:ring-blue-500
+      border-2 border-blue-600
+    `,
+    secondary: `
+      bg-gray-100 text-gray-900
+      hover:bg-gray-200
+      focus:ring-gray-500
+      border-2 border-gray-200
+    `,
+    outline: `
+      bg-transparent text-blue-600
+      hover:bg-blue-50
+      focus:ring-blue-500
+      border-2 border-blue-600
+    `,
+    ghost: `
+      bg-transparent text-gray-700
+      hover:bg-gray-100
+      focus:ring-gray-500
+      border-2 border-transparent
+    `,
+  };
+
+  const sizes = {
+    sm: 'px-3 py-1.5 text-sm',
+    md: 'px-4 py-2 text-base',
+    lg: 'px-6 py-3 text-lg',
+  };
+
+  return (
+    <button
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? (
+        <>
+          <svg
+            className="animate-spin h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
             />
-          )}
-          <span style={{ visibility: loading ? 'hidden' : 'visible' }}>{children}</span>
-        </MuiButton>
-      </motion.div>
-    );
-  }
-);
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <span>Loading...</span>
+        </>
+      ) : (
+        <>
+          {icon && <span className="flex-shrink-0">{icon}</span>}
+          {children}
+        </>
+      )}
+    </button>
+  );
+};
 
-Button.displayName = 'Button';
-
-export default memo(Button);
+export default Button;

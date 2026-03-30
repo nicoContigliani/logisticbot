@@ -1,99 +1,97 @@
 'use client';
 
-import { useState, InputHTMLAttributes, forwardRef, memo, useCallback, useMemo } from 'react';
-import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import React from 'react';
 
-interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'color'> {
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement | HTMLTextAreaElement> {
   label?: string;
   error?: string;
   helperText?: string;
-  size?: 'small' | 'medium';
-  fullWidth?: boolean;
+  icon?: React.ReactNode;
   startIcon?: React.ReactNode;
   endIcon?: React.ReactNode;
-  isPassword?: boolean;
+  fullWidth?: boolean;
   multiline?: boolean;
   rows?: number;
 }
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      label,
-      error,
-      helperText,
-      size = 'medium',
-      fullWidth = true,
-      startIcon,
-      endIcon,
-      isPassword = false,
-      multiline = false,
-      rows,
-      type,
-      ...props
-    },
-    ref
-  ) => {
-    const [showPassword, setShowPassword] = useState(false);
+const Input: React.FC<InputProps> = ({
+  label,
+  error,
+  helperText,
+  icon,
+  startIcon,
+  endIcon,
+  fullWidth = true,
+  multiline = false,
+  rows = 4,
+  className = '',
+  ...props
+}) => {
+  const inputIcon = icon || startIcon;
 
-    const handleClickShowPassword = () => {
-      setShowPassword(!showPassword);
-    };
+  return (
+    <div className={fullWidth ? 'w-full' : ''}>
+      {label && (
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          {label}
+        </label>
+      )}
+      <div className="relative">
+        {inputIcon && (
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+            {inputIcon}
+          </div>
+        )}
+        {multiline ? (
+          <textarea
+            className={`
+              w-full px-4 py-2
+              border rounded-lg
+              transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              ${inputIcon ? 'pl-10' : ''}
+              ${endIcon ? 'pr-10' : ''}
+              ${error
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 hover:border-gray-400'
+              }
+              ${className}
+            `}
+            rows={rows}
+            {...(props as React.TextareaHTMLAttributes<HTMLTextAreaElement>)}
+          />
+        ) : (
+          <input
+            className={`
+              w-full px-4 py-2
+              border rounded-lg
+              transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+              ${inputIcon ? 'pl-10' : ''}
+              ${endIcon ? 'pr-10' : ''}
+              ${error
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 hover:border-gray-400'
+              }
+              ${className}
+            `}
+            {...(props as React.InputHTMLAttributes<HTMLInputElement>)}
+          />
+        )}
+        {endIcon && (
+          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+            {endIcon}
+          </div>
+        )}
+      </div>
+      {error && (
+        <p className="mt-1 text-sm text-red-600">{error}</p>
+      )}
+      {helperText && !error && (
+        <p className="mt-1 text-sm text-gray-500">{helperText}</p>
+      )}
+    </div>
+  );
+};
 
-    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
-
-    return (
-      <TextField
-        ref={ref}
-        label={label}
-        type={inputType}
-        error={!!error}
-        helperText={error || helperText}
-        size={size}
-        fullWidth={fullWidth}
-        multiline={multiline}
-        rows={rows}
-        InputProps={{
-          startAdornment: startIcon ? (
-            <InputAdornment position="start">{startIcon}</InputAdornment>
-          ) : undefined,
-          endAdornment: isPassword ? (
-            <InputAdornment position="end">
-              <IconButton
-                onClick={handleClickShowPassword}
-                edge="end"
-                aria-label="toggle password visibility"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          ) : endIcon ? (
-            <InputAdornment position="end">{endIcon}</InputAdornment>
-          ) : undefined,
-        }}
-        sx={{
-          '& .MuiOutlinedInput-root': {
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'primary.main',
-              },
-            },
-            '&.Mui-focused': {
-              boxShadow: '0 0 0 3px rgba(99, 102, 241, 0.2)',
-            },
-          },
-        }}
-        {...props}
-      />
-    );
-  }
-);
-
-Input.displayName = 'Input';
-
-export default memo(Input);
+export default Input;

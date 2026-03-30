@@ -1,408 +1,270 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
-import { useSignUp } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import Box from '@mui/material/Box';
-import Container from '@mui/material/Container';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
+import React from 'react';
+import { SignUp } from '@clerk/nextjs';
 import Link from 'next/link';
-import { Button, Input } from '@/components/ui';
-import { useForm } from '@/hooks/useForm';
-import { pageVariants, staggerContainer, scaleInVariants, springConfig } from '@/hooks/useAnimations';
-
-const validate = (values: { firstName: string; lastName: string; email: string; password: string }) => {
-  const errors: Record<string, string> = {};
-  
-  if (!values.firstName) {
-    errors.firstName = 'First name is required';
-  }
-  
-  if (!values.lastName) {
-    errors.lastName = 'Last name is required';
-  }
-  
-  if (!values.email) {
-    errors.email = 'Email is required';
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email)) {
-    errors.email = 'Please enter a valid email';
-  }
-  
-  if (!values.password) {
-    errors.password = 'Password is required';
-  } else if (values.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters';
-  }
-  
-  return errors;
-};
 
 export default function SignUpPage() {
-  const { signUp } = useSignUp();
-  const router = useRouter();
-  const [isEmailSent, setIsEmailSent] = useState(false);
-  const [generalError, setGeneralError] = useState('');
-  
-  const {
-    values,
-    errors,
-    touched,
-    isSubmitting,
-    handleChange,
-    handleBlur,
-  } = useForm({
-    initialValues: { firstName: '', lastName: '', email: '', password: '' },
-    validate,
-    onSubmit: async () => {},
-  });
-
-  const onSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    setGeneralError('');
-    
-    const validationErrors = validate(values);
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
-    
-    if (!signUp) {
-      setGeneralError('Authentication not loaded. Please try again.');
-      return;
-    }
-
-    try {
-      const result = await signUp.create({
-        firstName: values.firstName,
-        lastName: values.lastName,
-        emailAddress: values.email,
-        password: values.password,
-      });
-
-      if (result.status === 'complete') {
-        router.push('/dashboard');
-      } else if (result.status === 'missing_requirements') {
-        setIsEmailSent(true);
-      }
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Something went wrong';
-      setGeneralError(message);
-    }
-  }, [values, signUp, router]);
-
-  if (isEmailSent) {
-    return (
-      <Box
-        sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          py: 4,
-        }}
-      >
-        <Container maxWidth="sm">
-          <motion.div
-            variants={pageVariants}
-            initial="initial"
-            animate="animate"
-          >
-            <Paper
-              elevation={24}
-              sx={{
-                p: 4,
-                borderRadius: 4,
-                backdropFilter: 'blur(20px)',
-                backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                textAlign: 'center',
-              }}
-            >
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ ...springConfig, delay: 0.2 }}
-              >
-                <Typography variant="h4" gutterBottom>
-                  Check your email
-                </Typography>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
-                  We sent a verification email to <strong>{values.email}</strong>
-                </Typography>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.4 }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Click the link in the email to verify your account.
-                </Typography>
-              </motion.div>
-            </Paper>
-          </motion.div>
-        </Container>
-      </Box>
-    );
-  }
-
   return (
-    <Box
-      sx={{
+    <div
+      style={{
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-        py: 4,
+        background: '#0a0a0a',
+        padding: '20px',
         position: 'relative',
         overflow: 'hidden',
       }}
     >
-      {/* Animated Background */}
-      <motion.div
-        animate={{
-          scale: [1, 1.2, 1],
-          rotate: [0, 180, 360],
-        }}
-        transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+      {/* Elegant Radial Light Background */}
+      <div
+        className="animate-pulse-slow"
         style={{
           position: 'absolute',
-          top: '-20%',
-          left: '-10%',
-          width: '50vw',
-          height: '50vw',
+          top: '20%',
+          left: '30%',
+          width: '400px',
+          height: '400px',
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.1)',
-          filter: 'blur(100px)',
+          background: 'radial-gradient(circle, rgba(102, 126, 234, 0.4) 0%, transparent 70%)',
+          filter: 'blur(60px)',
         }}
       />
-      <motion.div
-        animate={{
-          scale: [1, 1.5, 1],
-          x: [0, -50, 0],
-        }}
-        transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+      <div
+        className="animate-float"
         style={{
           position: 'absolute',
-          bottom: '-20%',
-          right: '-10%',
-          width: '50vw',
-          height: '50vw',
+          bottom: '10%',
+          right: '20%',
+          width: '500px',
+          height: '500px',
           borderRadius: '50%',
-          background: 'rgba(255, 255, 255, 0.1)',
+          background: 'radial-gradient(circle, rgba(118, 75, 162, 0.3) 0%, transparent 70%)',
           filter: 'blur(80px)',
         }}
       />
+      <div
+        className="animate-float-reverse"
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: '600px',
+          height: '600px',
+          borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 60%)',
+          filter: 'blur(100px)',
+        }}
+      />
+      
+      {/* Subtle grid pattern overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+          pointerEvents: 'none',
+        }}
+      />
 
-      <Container maxWidth="sm">
-        <motion.div
-          variants={pageVariants}
-          initial="initial"
-          animate="animate"
-          exit="exit"
+      <div
+        className="animate-fade-in-up"
+        style={{
+          width: '100%',
+          maxWidth: '400px',
+          position: 'relative',
+          zIndex: 1,
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '24px',
+            padding: '40px 32px',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+          }}
         >
-          <Paper
-            elevation={24}
-            sx={{
-              p: 4,
-              borderRadius: 4,
-              backdropFilter: 'blur(20px)',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              position: 'relative',
-              overflow: 'hidden',
+          {/* Glowing accent line */}
+          <div
+            className="animate-scale-x"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: '10%',
+              right: '10%',
+              height: '2px',
+              background: 'linear-gradient(90deg, transparent, #667eea, #764ba2, transparent)',
+              borderRadius: '2px',
             }}
-          >
-            {/* Animated Accent Line */}
-            <motion.div
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ delay: 0.3, duration: 0.8 }}
+          />
+
+          {/* Header */}
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <h1
+              className="animate-fade-in"
               style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: 4,
-                background: 'linear-gradient(90deg, #667eea, #764ba2)',
-                transformOrigin: 'left',
+                fontSize: '28px',
+                fontWeight: 700,
+                color: '#fff',
+                marginBottom: '8px',
+                margin: 0,
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Create Account
+            </h1>
+            <p
+              className="animate-fade-in-delay"
+              style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', margin: 0 }}
+            >
+              Start your learning journey today
+            </p>
+          </div>
+
+          {/* Clerk SignUp */}
+          <div className="animate-fade-in-delay-2">
+            <SignUp 
+              routing="hash"
+              signInUrl="/sign-in"
+              redirectUrl="/dashboard/onboarding"
+              appearance={{
+                layout: {
+                  logoPlacement: 'none',
+                  socialButtonsPlacement: 'bottom',
+                },
+                variables: {
+                  colorPrimary: '#667eea',
+                  colorBackground: 'transparent',
+                  colorText: '#fff',
+                  colorInputBackground: 'rgba(255,255,255,0.05)',
+                  colorInputText: '#fff',
+                  borderRadius: '12px',
+                  fontFamily: 'Segoe UI, system-ui, sans-serif',
+                },
+                elements: {
+                  rootBox: {
+                    width: '100%',
+                  },
+                  card: {
+                    width: '100%',
+                    background: 'transparent',
+                    boxShadow: 'none',
+                    border: 'none',
+                  },
+                  form: {
+                    width: '100%',
+                  },
+                  formField: {
+                    width: '100%',
+                  },
+                  formFieldInput: {
+                    width: '100%',
+                    padding: '14px 16px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    color: '#fff',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                  },
+                  formFieldInputFocus: {
+                    borderColor: '#667eea',
+                    boxShadow: '0 0 0 3px rgba(102, 126, 234, 0.2)',
+                  },
+                  formFieldLabel: {
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    marginBottom: '8px',
+                    display: 'block',
+                    color: 'rgba(255,255,255,0.7)',
+                  },
+                  formButtonPrimary: {
+                    width: '100%',
+                    backgroundColor: '#667eea',
+                    padding: '14px',
+                    borderRadius: '12px',
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    border: 'none',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s, transform 0.1s',
+                  },
+                  formButtonPrimaryHover: {
+                    backgroundColor: '#5a6fd6',
+                  },
+                  formButtonPrimaryActive: {
+                    transform: 'scale(0.98)',
+                  },
+                  dividerLine: {
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                  },
+                  dividerText: {
+                    color: 'rgba(255,255,255,0.4)',
+                    fontSize: '12px',
+                  },
+                  socialButtonsBlockButton: {
+                    width: '100%',
+                    padding: '12px',
+                    border: '1px solid rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    backgroundColor: 'rgba(255,255,255,0.05)',
+                    color: '#fff',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'background-color 0.2s',
+                  },
+                  socialButtonsBlockButtonHover: {
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                  },
+                  footer: {
+                    display: 'none',
+                  },
+                  footerActionLink: {
+                    color: '#667eea',
+                  },
+                  formFieldInputShowPasswordButton: {
+                    color: 'rgba(255,255,255,0.5)',
+                  },
+                },
               }}
             />
+          </div>
 
-            <Box sx={{ textAlign: 'center', mb: 4 }}>
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5, type: 'spring', stiffness: 260, damping: 20 }}
+          {/* Sign In Link */}
+          <div
+            className="animate-fade-in-delay-3"
+            style={{ textAlign: 'center', marginTop: '24px' }}
+          >
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', margin: 0 }}>
+              {"Already have an account? "}
+              <Link
+                href="/sign-in"
+                style={{
+                  color: '#667eea',
+                  fontWeight: 600,
+                  textDecoration: 'none',
+                  transition: 'color 0.2s',
+                }}
               >
-                <Typography
-                  variant="h3"
-                  component="h1"
-                  sx={{
-                    fontWeight: 700,
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    mb: 1,
-                  }}
-                >
-                  Create Account
-                </Typography>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                <Typography variant="body1" color="text.secondary">
-                  Start your learning journey today
-                </Typography>
-              </motion.div>
-            </Box>
-
-            <form onSubmit={onSubmit}>
-              <motion.div
-                variants={staggerContainer}
-                initial="initial"
-                animate="animate"
-              >
-                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-                  <Box sx={{ display: 'flex', gap: 2 }}>
-                    <Box sx={{ flex: 1 }}>
-                      <motion.div variants={scaleInVariants}>
-                        <Input
-                          label="First Name"
-                          type="text"
-                          value={values.firstName}
-                          onChange={handleChange('firstName')}
-                          onBlur={handleBlur('firstName')}
-                          error={touched.firstName ? errors.firstName : undefined}
-                          placeholder="John"
-                          required
-                          fullWidth
-                        />
-                      </motion.div>
-                    </Box>
-                    <Box sx={{ flex: 1 }}>
-                      <motion.div variants={scaleInVariants}>
-                        <Input
-                          label="Last Name"
-                          type="text"
-                          value={values.lastName}
-                          onChange={handleChange('lastName')}
-                          onBlur={handleBlur('lastName')}
-                          error={touched.lastName ? errors.lastName : undefined}
-                          placeholder="Doe"
-                          required
-                          fullWidth
-                        />
-                      </motion.div>
-                    </Box>
-                  </Box>
-
-                  <motion.div variants={scaleInVariants}>
-                    <Input
-                      label="Email"
-                      type="email"
-                      value={values.email}
-                      onChange={handleChange('email')}
-                      onBlur={handleBlur('email')}
-                      error={touched.email ? errors.email : undefined}
-                      placeholder="john@example.com"
-                      required
-                      fullWidth
-                    />
-                  </motion.div>
-
-                  <motion.div variants={scaleInVariants}>
-                    <Input
-                      label="Password"
-                      type="password"
-                      value={values.password}
-                      onChange={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      error={touched.password ? errors.password : undefined}
-                      placeholder="Create a strong password"
-                      required
-                      fullWidth
-                      isPassword
-                    />
-                  </motion.div>
-
-                  <AnimatePresence>
-                    {generalError && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                      >
-                        <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                          {generalError}
-                        </Typography>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <motion.div variants={scaleInVariants}>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      size="large"
-                      fullWidth
-                      loading={isSubmitting}
-                      disabled={isSubmitting}
-                    >
-                      Create Account
-                    </Button>
-                  </motion.div>
-                </Box>
-              </motion.div>
-            </form>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-            >
-              <Divider sx={{ my: 3 }}>
-                <Typography variant="body2" color="text.secondary">
-                  OR
-                </Typography>
-              </Divider>
-            </motion.div>
-
-            <Box sx={{ textAlign: 'center' }}>
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  Already have an account?{' '}
-                  <Link
-                    href="/sign-in"
-                    style={{
-                      color: '#667eea',
-                      textDecoration: 'none',
-                      fontWeight: 600,
-                    }}
-                  >
-                    Sign In
-                  </Link>
-                </Typography>
-              </motion.div>
-            </Box>
-          </Paper>
-        </motion.div>
-      </Container>
-    </Box>
+                Sign In
+              </Link>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
