@@ -1,91 +1,214 @@
-<p align="center">
-  <a href="https://eyteacher.com" target="_blank" rel="noopener noreferrer">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./public/light-logo.png">
-      <img alt="EyTeacher Logo" src="./public/dark-logo.png" height="64">
-    </picture>
-  </a>
-  <br />
-</p>
+# LogisticBot - Logistics Management System
 
-<div align="center">
-  <h1>EyTeacher - English Learning Platform</h1>
-  <p>Plataforma educativa para aprender inglés con sesiones personalizadas de IA</p>
-  
-  ![Next.js](https://img.shields.io/badge/Next.js-14-black)
-  ![Clerk](https://img.shields.io/badge/Clerk-Authentication-blue)
-  ![MongoDB](https://img.shields.io/badge/MongoDB-Database-green)
-  ![Material UI](https://img.shields.io/badge/Material%20UI-v7-purple)
-  ![Framer Motion](https://img.shields.io/badge/Framer%20Motion-Animations-orange)
-</div>
+A modern, minimalist logistics management platform built with Next.js, featuring file parsing capabilities for XML, Excel, CSV, and CASL formats.
 
-## 🚀 Características
+## Features
 
-### Autenticación
-- 🔐 **Clerk v5** - Autenticación moderna y segura
-- 📝 **Login/Register personalizado** - UI custom con Clerk
-- 🔒 **Rutas protegidas** - Middleware para proteger rutas
+- **File Parsing**: Support for XML, Excel (.xlsx, .xls), CSV, and CASL file formats
+- **Real-time Tracking**: Track shipments with automated status updates
+- **Inventory Management**: Comprehensive inventory control with alerts
+- **Analytics Dashboard**: Data visualization and reporting
+- **Minimalist Design**: Blueprint-style UI for optimal user experience
+- **High Performance**: Optimized for speed and efficiency
 
-### Base de Datos
-- 🍃 **MongoDB** con Mongoose
-- 📊 **Modelos** - Student, Teacher, ClassSession
-- 🔄 **Servicios** - Funciones helper para CRUD y analytics
+## Tech Stack
 
-### Estado
-- 🗃️ **Zustand** - Estado global simple y performante
-- 📡 **Hooks personalizados** - useFetch, usePagination, useSearch
+- **Frontend**: Next.js 14, React 19, Material-UI
+- **Backend**: Next.js API Routes
+- **Database**: MongoDB
+- **Authentication**: Clerk
+- **File Processing**: ExcelJS, PapaParse, xml2js
+- **Authorization**: CASL
+- **State Management**: Zustand
+- **Styling**: CSS Variables with Blueprint theme
 
-### UI/UX
-- 🎨 **Material UI v7** - Componentes profesionales
-- ✨ **Framer Motion** - Animaciones elegantes
-- 📱 **Mobile First** - Diseño responsive
-- 🎯 **Minimalista** - UX limpia para todas las edades
+## Getting Started
 
-### Funcionalidades
-- 📝 **DynamicForm** - Formularios desde JSON
-- 📊 **DataTable** - Tablas dinámicas con filtros, paginación
-- 🔄 **Excel/CSV** - Importación y exportación
-- ☁️ **Supabase** - Upload de archivos
-- 📚 **English Learning** - Sistema de tracking de progreso
+### Prerequisites
 
-### API
-- 📖 **Swagger** - Documentación dinámica
-- 🌐 **API Routes** - Estructura para APIs externas
-- 🔌 **Proxy** - Conexión a APIs externas
+- Node.js 18+ 
+- MongoDB instance
+- Clerk account for authentication
 
-## 📦 Estructura del Proyecto
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd logisticbot
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+pnpm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+
+Edit `.env.local` with your configuration:
+- MongoDB connection string
+- Clerk authentication keys
+- Supabase credentials (optional)
+
+4. Run the development server:
+```bash
+npm run dev
+# or
+pnpm dev
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
 
 ```
-eyteacher/
+logisticbot/
 ├── app/
 │   ├── api/
-│   │   ├── docs/          # Swagger UI
-│   │   ├── external/      # APIs externas
-│   │   └── cron/          # Tareas programadas
-│   ├── dashboard/
-│   │   └── english/       # Dashboard de inglés
-│   ├── sign-in/           # Login custom
-│   ├── sign-up/          # Register custom
-│   └── layout.tsx        # Root layout
-├── components/
-│   ├── providers/        # Context providers
-│   └── ui/               # Componentes reutilizables
-├── hooks/                # Custom hooks
-├── lib/                  # Utilidades y servicios
-├── models/               # Modelos Mongoose
-├── store/               # Zustand stores
-└── theme/               # Tema MUI
+│   │   ├── files/
+│   │   │   └── upload/          # File upload API
+│   │   └── logistics/           # Logistics CRUD API
+│   ├── dashboard/               # Main dashboard page
+│   ├── sign-in/                 # Authentication pages
+│   ├── sign-up/
+│   ├── layout.tsx               # Root layout
+│   ├── page.tsx                 # Landing page
+│   └── globals.css              # Global styles
+├── lib/
+│   ├── mongodb.ts               # MongoDB connection
+│   ├── file-parsers.ts          # File parsing utilities
+│   └── ability.ts               # CASL authorization
+├── styles/
+│   └── blueprint-theme.css      # Blueprint design system
+├── components/                  # Reusable components
+├── hooks/                       # Custom React hooks
+├── store/                       # Zustand state stores
+├── types/                       # TypeScript type definitions
+└── public/                      # Static assets
 ```
 
-## 🛠️ Tecnologías
+## File Parsing
 
-| Tecnología | Versión | Uso |
-|------------|---------|-----|
-| Next.js | 14 | Framework |
-| Clerk | 5.x | Autenticación |
-| MongoDB | - | Base de datos |
-| Mongoose | - | ODM |
-| Zustand | - | Estado |
-| Material UI | 7.x | UI Framework |
-| Framer Motion | - | Animaciones |
-|
+LogisticBot supports multiple file formats:
+
+### Excel (.xlsx, .xls)
+```typescript
+import { parseExcel } from '@/lib/file-parsers';
+
+const data = await parseExcel(file);
+// Returns: { headers: string[], rows: Record<string, unknown>[] }
+```
+
+### CSV
+```typescript
+import { parseCSV } from '@/lib/file-parsers';
+
+const data = await parseCSV(file);
+```
+
+### XML
+```typescript
+import { parseXML } from '@/lib/file-parsers';
+
+const data = await parseXML(file);
+```
+
+### CASL
+```typescript
+import { parseCASL } from '@/lib/file-parsers';
+
+const data = await parseCASL(file);
+```
+
+### Auto-detect Format
+```typescript
+import { parseFile } from '@/lib/file-parsers';
+
+const data = await parseFile(file); // Automatically detects file type
+```
+
+## API Endpoints
+
+### File Upload
+- `POST /api/files/upload` - Upload a file
+- `GET /api/files/upload?userId=<id>` - Get user's uploaded files
+
+### Logistics Records
+- `POST /api/logistics` - Create logistics records
+- `GET /api/logistics?userId=<id>` - Get logistics records (with pagination)
+- `PUT /api/logistics` - Update a logistics record
+- `DELETE /api/logistics?id=<id>&userId=<userId>` - Delete a record
+
+## Authorization (CASL)
+
+LogisticBot uses CASL for fine-grained authorization:
+
+```typescript
+import { defineAbilityFor, ROLES } from '@/lib/ability';
+
+// Define abilities for a user
+const ability = defineAbilityFor({ role: ROLES.MANAGER, id: 'user-123' });
+
+// Check permissions
+if (ability.can('create', 'Shipment')) {
+  // User can create shipments
+}
+```
+
+### Roles
+- **Admin**: Full access to all resources
+- **Manager**: Can create/update shipments, export reports
+- **Operator**: Can read/update shipments
+- **Viewer**: Read-only access
+
+## Design System
+
+LogisticBot uses a minimalist blueprint-style design:
+
+### CSS Variables
+```css
+:root {
+  --primary-600: #2563eb;
+  --neutral-800: #1e293b;
+  --success-500: #22c55e;
+  /* ... more variables */
+}
+```
+
+### Components
+- `.blueprint-card` - Card component with sketch border
+- `.blueprint-btn` - Button styles
+- `.blueprint-input` - Input field styles
+- `.blueprint-table` - Table styles
+- `.blueprint-badge` - Badge/status indicator
+
+## Performance Optimizations
+
+1. **Lazy Loading**: Components and routes are lazy-loaded
+2. **Image Optimization**: Next.js Image component with automatic optimization
+3. **Code Splitting**: Automatic code splitting by Next.js
+4. **Caching**: API responses are cached where appropriate
+5. **Debounced Inputs**: File upload and search inputs are debounced
+6. **Virtual Scrolling**: Large data tables use virtual scrolling
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Support
+
+For support, email support@logisticbot.com or open an issue on GitHub.
+# logisticbot
