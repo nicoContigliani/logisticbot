@@ -60,6 +60,15 @@
   color: #0078d4;
 }
 
+.nav-item:active {
+  background-color: rgba(0, 120, 212, 0.12);
+}
+
+.nav-item:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: -2px;
+}
+
 /* Nav Item Container */
 .nav-item-container {
   display: flex;
@@ -115,6 +124,15 @@
   color: #0078d4;
 }
 
+.nav-subitem:active {
+  background-color: rgba(0, 120, 212, 0.12);
+}
+
+.nav-subitem:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: -2px;
+}
+
 .drawer-footer {
   padding: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -130,11 +148,25 @@
   cursor: pointer;
   transition: all 0.15s ease;
   font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
 .logout-button:hover {
   background-color: #0078d4;
   color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.logout-button:active {
+  background-color: #005a9e;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.logout-button:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
 }
 
 /* Mobile Drawer */
@@ -475,6 +507,16 @@
   box-shadow: 0 4px 16px rgba(0, 120, 212, 0.15);
 }
 
+.drop-zone:active {
+  background: rgba(0, 120, 212, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 120, 212, 0.15);
+}
+
+.drop-zone:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
 .drop-zone-active {
   border-color: #0078d4;
   background: rgba(0, 120, 212, 0.08);
@@ -499,6 +541,54 @@
   font-size: 14px;
   color: #666666;
   margin: 0;
+}
+
+/* File Upload Component */
+.file-upload-container {
+  margin-bottom: 24px;
+}
+
+.file-upload-header {
+  margin-bottom: 16px;
+}
+
+.file-upload-title {
+  font-size: 20px;
+  font-weight: 400;
+  margin: 0 0 8px 0;
+  color: #333333;
+}
+
+.file-upload-description {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+.drop-zone-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.drop-zone-disabled:hover {
+  background: rgba(0, 120, 212, 0.04);
+  box-shadow: none;
+}
+
+.file-upload-max-size {
+  font-size: 12px;
+  color: #999999;
+  margin-top: 8px;
+}
+
+.file-upload-error {
+  margin-top: 12px;
+  padding: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 0;
+  color: #dc2626;
+  font-size: 14px;
 }
 
 .file-types {
@@ -549,6 +639,17 @@
 .file-item:hover {
   border-color: #0078d4;
   background: rgba(0, 120, 212, 0.04);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.file-item:active {
+  background: rgba(0, 120, 212, 0.08);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.file-item:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
 }
 
 .file-item-selected {
@@ -664,10 +765,24 @@
   transition: all 0.15s ease;
   color: white;
   font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
 .export-btn:hover {
   background: #005a9e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.export-btn:active {
+  background: #004578;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.export-btn:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
 }
 
 .table-container {
@@ -736,6 +851,304 @@
   margin: 0;
 }
 
+/* Sheet Tabs */
+.sheet-tab {
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid #ccc;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.sheet-tab:hover {
+  background: rgba(0, 120, 212, 0.08);
+  border-color: #0078d4;
+}
+
+.sheet-tab:active {
+  background: rgba(0, 120, 212, 0.12);
+}
+
+.sheet-tab:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.sheet-tab-active {
+  background: #0078d4;
+  color: white;
+  border-color: #0078d4;
+}
+
+/* Pagination Buttons */
+.pagination-button {
+  padding: 8px 12px;
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.pagination-button:hover:not(:disabled) {
+  background: #005a9e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.pagination-button:active:not(:disabled) {
+  background: #004578;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.pagination-button:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.pagination-button:disabled {
+  background: #f2f2f2;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Send Messages Button */
+.btn-send-messages {
+  padding: 12px 24px;
+  background: #25D366;
+  border: none;
+  border-radius: 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.btn-send-messages:hover:not(:disabled) {
+  background: #128C7E;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.btn-send-messages:active:not(:disabled) {
+  background: #075E54;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.btn-send-messages:focus {
+  outline: 2px solid #25D366;
+  outline-offset: 2px;
+}
+
+.btn-send-messages:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Clear Status Button */
+.btn-clear-status {
+  padding: 12px 24px;
+  background: #666666;
+  border: none;
+  border-radius: 0;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.btn-clear-status:hover {
+  background: #555555;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.btn-clear-status:active {
+  background: #444444;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.btn-clear-status:focus {
+  outline: 2px solid #666666;
+  outline-offset: 2px;
+}
+
+/* Bot Connections Section */
+.bot-connections-section {
+  margin-top: 32px;
+}
+
+.connections-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Bot Connections - Compact (inline with stats) */
+.bot-connections-compact {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* WhatsApp Connection Card - Compact Horizontal */
+.whatsapp-connection-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: white;
+  border: none;
+  border-radius: 0;
+  padding: 12px 16px;
+  min-width: 280px;
+  max-width: 400px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.whatsapp-connection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #0078d4;
+}
+
+.whatsapp-connection-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.connection-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.connection-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.connection-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.connection-label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #333333;
+}
+
+.connection-status {
+  font-size: 0.75rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.status-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.connection-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.connection-error {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  cursor: help;
+}
+
+.btn-refresh-connection {
+  background: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.btn-refresh-connection:hover:not(:disabled) {
+  background: #005a9e;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
+  transform: translateY(-1px);
+}
+
+.btn-refresh-connection:active:not(:disabled) {
+  background: #004578;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  transform: translateY(0);
+}
+
+.btn-refresh-connection:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
+}
+
+.btn-refresh-connection:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Responsive - Mobile First */
+@media (max-width: 600px) {
+  .whatsapp-connection-card {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  
+  .connections-grid {
+    flex-direction: column;
+  }
+}
+
 /* Quick Actions */
 .quick-actions {
   margin-top: 32px;
@@ -784,6 +1197,16 @@
 
 .action-card:hover::before {
   opacity: 1;
+}
+
+.action-card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.action-card:focus {
+  outline: 2px solid #0078d4;
+  outline-offset: 2px;
 }
 
 .action-content {

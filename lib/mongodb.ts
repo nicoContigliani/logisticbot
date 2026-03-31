@@ -42,6 +42,12 @@ export async function getCollection<T extends Document>(name: string): Promise<C
   return db.collection<T>(name);
 }
 
+export async function connectDB(): Promise<void> {
+  // Connection is already established via clientPromise
+  // This function exists for compatibility with existing code
+  await clientPromise;
+}
+
 export async function closeConnection(): Promise<void> {
   const client = await clientPromise;
   await client.close();

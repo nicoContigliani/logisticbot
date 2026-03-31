@@ -26,6 +26,7 @@ const menuItems: MenuItem[] = [
       { text: 'Email', href: '/dashboard/bot/email' },
     ],
   },
+  { text: 'Delivery', href: '/dashboard/delivery' },
   { text: 'Profile', href: '/dashboard/profile' },
   { text: 'Settings', href: '/dashboard/settings' },
 ];

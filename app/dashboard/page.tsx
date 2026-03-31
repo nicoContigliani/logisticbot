@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { parseFile, toLogisticsRecords, ParsedData, LogisticsRecord } from '@/lib/file-parsers';
 import { exportToCSV, exportToExcel, exportToXML } from '@/lib/file-parsers';
+import { WhatsAppConnectionTile } from '@/components/ui';
 import './dashboard.css';
 
 interface UploadedFile {
@@ -343,6 +344,11 @@ export default function DashboardPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Bot Connections - Compact */}
+        <div className="bot-connections-compact">
+          <WhatsAppConnectionTile />
         </div>
 
         {/* Quick Actions */}

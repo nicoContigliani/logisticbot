@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { ObjectId } from 'mongodb';
 import { getCollection } from '@/lib/mongodb';
 
 export interface LogisticsRecord {
@@ -168,7 +169,7 @@ export async function DELETE(request: NextRequest) {
 
     const logisticsCollection = await getCollection('logistics_records');
 
-    const result = await logisticsCollection.deleteOne({ _id: id, userId });
+    const result = await logisticsCollection.deleteOne({ _id: new ObjectId(id), userId });
 
     if (result.deletedCount === 0) {
       return NextResponse.json(
