@@ -44,14 +44,17 @@
 **Ahora:**
 - **Mensaje por defecto** profesional con placeholders:
   ```
+  ********************************************************************************
   📦 *Notificación de Entrega*
 
   Hola! Tu pedido está en camino.
 
   🚚 *Repartidor:* {{deliveryPersonName}}
   📱 *Contacto:* {{deliveryPersonPhone}}
+  ⏰ *Horario:* {{shift}}
 
   ¡Gracias por tu compra! 🙏
+  ********************************************************************************
   ```
 - **Selector de tipo de mensaje** con 8 opciones:
   - 📝 Text Message
@@ -64,8 +67,10 @@
   - 🎥 Video
 - **Campos dinámicos** según el tipo de mensaje seleccionado
 - **Placeholders** en el mensaje para valores dinámicos:
+  - `{{clientName}}` - Nombre del cliente
   - `{{deliveryPersonName}}` - Nombre del repartidor
   - `{{deliveryPersonPhone}}` - Teléfono del repartidor
+  - `{{shift}}` - Turno (Mañana/Tarde)
 
 ### 4. Frontend Delivery Page ([`app/dashboard/delivery/page.tsx`](app/dashboard/delivery/page.tsx))
 
@@ -77,14 +82,17 @@
 **Ahora:**
 - **Mensaje por defecto** profesional con placeholders (mismo que WhatsApp page):
   ```
+  ********************************************************************************
   📦 *Notificación de Entrega*
 
   Hola! Tu pedido está en camino.
 
   🚚 *Repartidor:* {{deliveryPersonName}}
   📱 *Contacto:* {{deliveryPersonPhone}}
+  ⏰ *Horario:* {{shift}}
 
   ¡Gracias por tu compra! 🙏
+  ********************************************************************************
   ```
 - **Header limpio** sin duplicación de "Welcome, {user}" (ya está en el layout)
 - **Vista previa del mensaje** mejorada con formato pre-wrap
@@ -133,7 +141,7 @@
    {
      "userId": "user_123",
      "companyName": "Mi Empresa",
-     "message": "📦 *Notificación de Entrega*\n\nHola! Tu pedido está en camino.\n\n🚚 *Repartidor:* Juan Pérez\n📱 *Contacto:* +5491112345678\n\n¡Gracias por tu compra! 🙏",
+     "message": "********************************************************************************\n📦 *Notificación de Entrega*\n\nHola! Tu pedido está en camino.\n\n🚚 *Repartidor:* Juan Pérez\n📱 *Contacto:* +5491112345678\n⏰ *Horario:* Mañana\n\n¡Gracias por tu compra! 🙏\n********************************************************************************",
      "shift": "morning",
      "deliveryPerson": {
        "name": "Juan Pérez",
@@ -156,16 +164,16 @@
        "image": {
          "url": "https://example.com/pedido.jpg"
        },
-       "caption": "📦 *Notificación de Entrega*\n\nHola! Tu pedido está en camino.\n\n🚚 *Repartidor:* Juan Pérez\n📱 *Contacto:* +5491112345678\n\n¡Gracias por tu compra! 🙏"
+       "caption": "********************************************************************************\n📦 *Notificación de Entrega*\n\nHola! Tu pedido está en camino.\n\n🚚 *Repartidor:* Juan Pérez\n📱 *Contacto:* +5491112345678\n⏰ *Horario:* Mañana\n\n¡Gracias por tu compra! 🙏\n********************************************************************************"
      }
    }
    ```
 
 3. **Peronbot** recibe y envía a WhatsApp:
    ```javascript
-   await BotClient.sendMessage(jid, {
+   await BotClient.sock.sendMessage(jid, {
      image: { url: "https://example.com/pedido.jpg" },
-     caption: "📦 *Notificación de Entrega*..."
+     caption: "********************************************************************************\n📦 *Notificación de Entrega*...\n********************************************************************************"
    });
    ```
 

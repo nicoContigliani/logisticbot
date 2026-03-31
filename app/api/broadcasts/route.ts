@@ -67,6 +67,18 @@ export async function POST(request: NextRequest) {
 
     // Prepare message options for WhatsApp
     const messageOptions: Record<string, unknown> = {};
+    
+    console.log('🔍 [BROADCAST API] Preparing message options:', {
+      hasImageUrl: !!imageUrl,
+      hasAudioUrl: !!audioUrl,
+      hasDocumentUrl: !!documentUrl,
+      hasContact: !!(contactName && contactPhone),
+      hasLocation: !!(locationLatitude && locationLongitude),
+      hasSticker: !!stickerUrl,
+      hasVideo: !!videoUrl,
+      messageLength: message?.length,
+      messagePreview: message?.substring(0, 100)
+    });
 
     // Add image if provided
     if (imageUrl) {

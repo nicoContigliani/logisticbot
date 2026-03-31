@@ -16,14 +16,20 @@ interface UploadedFile {
   error?: string;
 }
 
-const DEFAULT_MESSAGE = `📦 *Notificación de Entrega*
+const DEFAULT_MESSAGE = `********************************************************************************
+📦 *Notificación de Entrega SHINE*
 
-Hola! Tu pedido está en camino.
+Hola {{clientName}}! Tu pedido está en camino.
 
 🚚 *Repartidor:* {{deliveryPersonName}}
 📱 *Contacto:* {{deliveryPersonPhone}}
+⏰ *Horario:* {{shift}}
 
-¡Gracias por tu compra! 🙏`;
+¡Gracias por tu compra! 🙏
+
+********************************************************************************************************
+Bot Desarrollado por Nicolás Contigliani - https://www.linkedin.com/in/nicolas-contigliani
+********************************************************************************************************`;
 
 export default function DeliveryPage() {
   const { user } = useUser();
@@ -284,9 +290,11 @@ export default function DeliveryPage() {
 
     try {
       // Format message with placeholders
+      const shiftText = shift === 'morning' ? 'Mañana' : 'Tarde';
       const message = DEFAULT_MESSAGE
         .replace('{{deliveryPersonName}}', finalDeliveryPersonName)
-        .replace('{{deliveryPersonPhone}}', formattedPhone);
+        .replace('{{deliveryPersonPhone}}', formattedPhone)
+        .replace('{{shift}}', shiftText);
 
       console.log('🔍 [DELIVERY] Sending WhatsApp broadcast:', {
         userId: user?.id,
@@ -559,8 +567,10 @@ export default function DeliveryPage() {
               <div style={{ fontSize: '14px', color: '#333', whiteSpace: 'pre-wrap' }}>
                 {deliveryPersonName 
                   ? DEFAULT_MESSAGE
+                      .replace('{{clientName}}', '[Nombre del Cliente]')
                       .replace('{{deliveryPersonName}}', deliveryPersonName)
                       .replace('{{deliveryPersonPhone}}', deliveryPersonPhone || '+5491112345678')
+                      .replace('{{shift}}', shift === 'morning' ? 'Mañana' : 'Tarde')
                   : 'Completa el nombre del repartidor para ver el mensaje'}
               </div>
             </div>
