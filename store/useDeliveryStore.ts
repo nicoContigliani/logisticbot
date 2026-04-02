@@ -26,52 +26,31 @@ export interface BroadcastRecord {
   sentAt?: string;
 }
 
-export interface UploadHistoryItem {
-  id: string;
-  fileName: string;
-  rowCount: number;
-  uploadedAt: string;
-  updatedAt: string;
-  mergeCount: number;
-  wasUpdated: boolean;
-}
-
-export interface DateGroup {
-  date: string;
-  totalUploads: number;
-  totalRows: number;
-  lastUpload: string;
-  uploads: UploadHistoryItem[];
-}
-
-export type DeliveryTab = 'registros' | 'modificaciones' | 'mensajes';
+export type DeliveryTab = 'registros' | 'historial' | 'mensajes';
 
 interface DeliveryState {
   activeTab: DeliveryTab;
   uploadedFiles: UploadedFile[];
   selectedFileId: string | null;
-  activeSheet: number;
   searchTerm: string;
   currentPage: number;
   rowsPerPage: number;
   deliveryPersonName: string;
   deliveryPersonPhone: string;
   shift: 'morning' | 'afternoon';
-  sentPhones: string[];
+  sentPhones: Record<string, string[]>;
 
   setActiveTab: (tab: DeliveryTab) => void;
   setUploadedFiles: (files: UploadedFile[] | ((prev: UploadedFile[]) => UploadedFile[])) => void;
   setSelectedFileId: (id: string | null) => void;
-  setActiveSheet: (index: number) => void;
   setSearchTerm: (term: string) => void;
   setCurrentPage: (page: number) => void;
   setRowsPerPage: (size: number) => void;
   setDeliveryPersonName: (name: string) => void;
   setDeliveryPersonPhone: (phone: string) => void;
   setShift: (shift: 'morning' | 'afternoon') => void;
-  addSentPhones: (phones: string[]) => void;
+  addSentPhones: (type: string, phones: string[]) => void;
   clearSentPhones: () => void;
-  resetView: () => void;
 }
 
 export const useDeliveryStore = create<DeliveryState>()(
@@ -80,14 +59,13 @@ export const useDeliveryStore = create<DeliveryState>()(
       activeTab: 'registros',
       uploadedFiles: [],
       selectedFileId: null,
-      activeSheet: 0,
       searchTerm: '',
       currentPage: 1,
       rowsPerPage: 10,
       deliveryPersonName: '',
       deliveryPersonPhone: '',
       shift: 'morning',
-      sentPhones: [],
+      sentPhones: {},
 
       setActiveTab: (activeTab) => set({ activeTab }),
       setUploadedFiles: (files) =>
@@ -95,24 +73,23 @@ export const useDeliveryStore = create<DeliveryState>()(
           uploadedFiles: typeof files === 'function' ? files(state.uploadedFiles) : files,
         })),
       setSelectedFileId: (selectedFileId) => set({ selectedFileId }),
-      setActiveSheet: (activeSheet) => set({ activeSheet }),
       setSearchTerm: (searchTerm) => set({ searchTerm, currentPage: 1 }),
       setCurrentPage: (currentPage) => set({ currentPage }),
       setRowsPerPage: (rowsPerPage) => set({ rowsPerPage, currentPage: 1 }),
       setDeliveryPersonName: (deliveryPersonName) => set({ deliveryPersonName }),
       setDeliveryPersonPhone: (deliveryPersonPhone) => set({ deliveryPersonPhone }),
       setShift: (shift) => set({ shift }),
-      addSentPhones: (phones) =>
-        set((state) => ({
-          sentPhones: [...new Set([...state.sentPhones, ...phones])],
-        })),
-      clearSentPhones: () => set({ sentPhones: [] }),
-      resetView: () =>
-        set({
-          activeSheet: 0,
-          searchTerm: '',
-          currentPage: 1,
+      addSentPhones: (type, phones) =>
+        set((state) => {
+          const current = state.sentPhones[type] || [];
+          return {
+            sentPhones: {
+              ...state.sentPhones,
+              [type]: [...new Set([...current, ...phones])],
+            },
+          };
         }),
+      clearSentPhones: () => set({ sentPhones: {} }),
     }),
     {
       name: 'logisticbot-delivery-storage',

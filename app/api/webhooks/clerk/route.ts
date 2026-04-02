@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
+import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import { Webhook } from 'svix';
 import { headers } from 'next/headers';
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     const eventType = evt.type;
     const { id, email_addresses, first_name, last_name, image_url } = evt.data;
 
-    await dbConnect();
+    await connectDB();
 
     if (eventType === 'user.created' || eventType === 'user.updated') {
       const email = email_addresses?.[0]?.email_address;

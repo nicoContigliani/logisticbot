@@ -138,7 +138,7 @@ export default function SignUpPage() {
             <SignUp 
               routing="hash"
               signInUrl="/sign-in"
-              redirectUrl="/dashboard/onboarding"
+              forceRedirectUrl="/dashboard/onboarding"
               appearance={{
                 layout: {
                   logoPlacement: 'none',

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuth } from '@clerk/nextjs/server';
-import dbConnect from '@/lib/mongodb';
+import { connectDB } from '@/lib/mongodb';
 import User from '@/models/User';
 import { AppError, errorHandler } from '@/lib/error-handler';
 
@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       throw new AppError('Unauthorized', 401);
     }
 
-    await dbConnect();
+    await connectDB();
 
     // Get user data from Clerk
     const body = await request.json();
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       throw new AppError('Unauthorized', 401);
     }
 
-    await dbConnect();
+    await connectDB();
 
     const user = await User.findOne({ clerkId: userId });
 

@@ -71,18 +71,13 @@ const Loading200 = () => <LoadingSkeleton height="200px" />;
 const Loading100 = () => <LoadingSkeleton height="100px" />;
 
 // Lazy load heavy components
-export const DynamicDashboard = dynamic(
-  () => import('@/app/dashboard/english/page'),
-  { ssr: false, loading: Loading400 }
-);
-
 export const DynamicDataTable = dynamic(
   () => import('@/components/ui/DataTable'),
   { ssr: false, loading: Loading200 }
 );
 
 export const DynamicDatePicker = dynamic(
-  () => import('@/components/ui/DatePicker'),
+  () => import('@/components/ui/DatePicker').then(mod => ({ default: mod.DatePicker })),
   { ssr: false, loading: Loading100 }
 );
 
@@ -92,7 +87,7 @@ export const DynamicForm = dynamic(
 );
 
 export const DynamicPagination = dynamic(
-  () => import('@/components/ui/Pagination'),
+  () => import('@/components/ui/Pagination').then(mod => ({ default: mod.Pagination })),
   { ssr: false, loading: Loading100 }
 );
 
@@ -238,7 +233,6 @@ export function SuspenseWrapper({
 // ============================================
 
 export default {
-  DynamicDashboard,
   DynamicDataTable,
   DynamicDatePicker,
   DynamicForm,

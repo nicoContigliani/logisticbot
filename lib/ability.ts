@@ -37,7 +37,7 @@ export function defineAbilityFor(user: { role: string; id: string }) {
 
   return build({
     detectSubjectType: (item: Record<string, unknown>) =>
-      item.constructor as ExtractSubjectType<Subjects>,
+      item.constructor as unknown as ExtractSubjectType<Subjects>,
   });
 }
 
