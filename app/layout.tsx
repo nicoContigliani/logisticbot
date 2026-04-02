@@ -1,7 +1,6 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import '../styles/blueprint-theme.css';
-import '../styles/logistics-floorplan.css';
+import './globals.css';
 import { Providers } from '@/components/providers';
 
 export const metadata: Metadata = {
@@ -9,7 +8,11 @@ export const metadata: Metadata = {
   description: 'Modern logistics management platform for tracking, inventory, and supply chain operations',
   keywords: ['logistics', 'tracking', 'inventory', 'supply chain', 'management'],
   authors: [{ name: 'LogisticBot' }],
-  viewport: 'width=device-width, initial-scale=1',
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 const inter = Inter({ 

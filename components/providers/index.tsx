@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import { ClerkProvider } from '@clerk/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from './ThemeProvider';
+import { I18nProvider } from '@/lib/i18n/useI18n';
 import { useState } from 'react';
 
 interface ProvidersProps {
@@ -25,7 +26,9 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <ClerkProvider>
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <I18nProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </I18nProvider>
       </QueryClientProvider>
     </ClerkProvider>
   );
